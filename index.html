@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NITORI – Thử Sofa bằng AR</title>
+
+  <!-- ── Google Analytics GA4 ──────────────────────────────────────
+       THAY "G-XXXXXXXXXX" bằng Measurement ID thực tế của bạn
+  ──────────────────────────────────────────────────────────────── -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+
+    // Gửi custom event khi nhấn nút AR
+    function trackAR(productId, productName) {
+      gtag('event', 'ar_view_click', {
+        event_category: 'AR Experience',
+        event_label: productName,
+        product_id: productId
+      });
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #f7f5f2;
+      --surface:      #ffffff;
+      --border:       #e8e3dc;
+      --text:         #1a1714;
+      --muted:        #8c867e;
+      --accent:       #2d5a3d;
+      --accent-light: #edf3ef;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem; letter-spacing: .06em;
+    }
+    .ar-chip {
+      display: flex; align-items: center; gap: .35rem;
+      background: var(--accent); color: #fff;
+      font-size: .65rem; font-weight: 500;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: .3rem .75rem; border-radius: 2px;
+    }
+    .ar-chip svg { width: 12px; height: 12px; fill: #fff; }
+
+    /* HERO */
+    .hero {
+      padding: 2.2rem 1.4rem 1.4rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 7vw, 2.6rem);
+      line-height: 1.15; margin-bottom: .6rem;
+    }
+    .hero h1 em { font-style: italic; }
+    .hero p {
+      font-size: .88rem; line-height: 1.7;
+      color: var(--muted);
+      max-width: 320px; margin: 0 auto 1.3rem;
+    }
+    .steps {
+      display: inline-flex; gap: 1rem;
+      background: var(--accent-light);
+      padding: .65rem 1.1rem; border-radius: 4px;
+      font-size: .76rem; color: var(--accent);
+    }
+    .step { display: flex; align-items: center; gap: .3rem; }
+    .sn {
+      width: 17px; height: 17px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-size: .62rem; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* LIST */
+    .list {
+      padding: .6rem 1.2rem 3rem;
+      display: flex; flex-direction: column; gap: .85rem;
+      max-width: 540px; margin: 0 auto;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; overflow: hidden;
+      text-decoration: none; color: inherit;
+      opacity: 0; transform: translateY(12px);
+      animation: up .45s ease forwards;
+      transition: box-shadow .2s;
+    }
+    .card:nth-child(1){animation-delay:.04s}
+    .card:nth-child(2){animation-delay:.10s}
+    .card:nth-child(3){animation-delay:.16s}
+    .card:nth-child(4){animation-delay:.22s}
+    .card:nth-child(5){animation-delay:.28s}
+    .card:nth-child(6){animation-delay:.34s}
+    .card:active { box-shadow: 0 0 0 2px var(--accent); }
+
+    .card-img {
+      width: 110px; flex-shrink: 0;
+      background: var(--bg); overflow: hidden;
+    }
+    .card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+      transition: transform .35s ease;
+    }
+    .card:hover .card-img img { transform: scale(1.06); }
+
+    .card-body {
+      flex: 1; padding: .9rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem; margin-bottom: .15rem;
+    }
+    .card-sub { font-size: .74rem; color: var(--muted); }
+
+    .card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: .7rem;
+    }
+    .card-price { font-size: .88rem; font-weight: 500; }
+
+    .btn-ar {
+      display: inline-flex; align-items: center; gap: .34rem;
+      background: var(--accent); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .42rem .85rem; border-radius: 3px;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: background .2s, transform .12s;
+      white-space: nowrap;
+    }
+    .btn-ar:active { transform: scale(.95); }
+    .btn-ar svg { width: 13px; height: 13px; fill: #fff; flex-shrink: 0; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 1.8rem 1.4rem 2.4rem;
+      font-size: .74rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @keyframes up {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 560px) {
+      .card-img { width: 150px; }
+    }
+  </style>
+
+</head>
+<body>
+
+<header>
+  <span class="logo">NITORI</span>
+  <div class="ar-chip">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+    AR Ready
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Đặt sofa vào<br/><em>phòng của bạn</em></h1>
+  <p>Hướng camera vào sàn nhà và xem sofa thật sự trông như thế nào — ngay trên điện thoại.</p>
+  <div class="steps">
+    <div class="step"><span class="sn">1</span>Chọn mẫu</div>
+    <div class="step"><span class="sn">2</span>Nhấn Xem AR</div>
+    <div class="step"><span class="sn">3</span>Đặt vào phòng</div>
+  </div>
+</section>
+
+<div class="list" id="list"></div>
+
+<footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
+
+<script>
+  // ────────────────────────────────────────────────────────────────
+  //  DỮ LIỆU SẢN PHẨM
+  //  → Thay ar_url bằng link AR thực tế của từng sản phẩm
+  //    (model-viewer, Sketchfab, Zakeke, nền tảng riêng…)
+  // ────────────────────────────────────────────────────────────────
+  const products = [
+    {
+      id:     "sofa-hana-3s",
+      name:   "Sofa Hana",
+      sub:    "3 chỗ · Vải cao cấp · 3 màu",
+      price:  "12.990.000 ₫",
+      img:    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-hana-3s"
+    },
+    {
+      id:     "sofa-nori-l",
+      name:   "Sofa Nori L-Shape",
+      sub:    "Góc chữ L · Da tổng hợp",
+      price:  "18.275.000 ₫",
+      img:    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-nori-l"
+    },
+    {
+      id:     "sofa-yuki-2s",
+      name:   "Sofa Yuki",
+      sub:    "2 chỗ · Nỉ mềm",
+      price:  "8.490.000 ₫",
+      img:    "https://images.unsplash.com/photo-1567538096621-38d2284b23ff?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-yuki-2s"
+    },
+    {
+      id:     "sofa-sora-1s",
+      name:   "Sofa Sora Studio",
+      sub:    "1 chỗ · Khung gỗ sồi",
+      price:  "6.990.000 ₫",
+      img:    "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-sora-1s"
+    },
+    {
+      id:     "sofa-kaze-recline",
+      name:   "Sofa Kaze Recline",
+      sub:    "3 chỗ · Ngả lưng điều chỉnh",
+      price:  "15.840.000 ₫",
+      img:    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-kaze-recline"
+    },
+    {
+      id:     "sofa-tsuki-bed",
+      name:   "Sofa Tsuki",
+      sub:    "Sofa giường · Đa năng",
+      price:  "16.500.000 ₫",
+      img:    "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400&auto=format&fit=crop",
+      ar_url: "https://ar.nitori.vn/sofa-tsuki-bed"
+    }
+  ];
+
+  const arSVG = `<svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>`;
+
+  const list = document.getElementById('list');
+
+  products.forEach(p => {
+    // Toàn bộ card là link → tap ở đâu cũng vào AR
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = p.ar_url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+
+    a.innerHTML = `
+      <div class="card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy"/>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-name">${p.name}</div>
+          <div class="card-sub">${p.sub}</div>
+        </div>
+        <div class="card-foot">
+          <span class="card-price">${p.price}</span>
+          <span class="btn-ar">${arSVG} Xem AR</span>
+        </div>
+      </div>`;
+
+    // GA4: ghi nhận khi nhấn
+    a.addEventListener('click', () => trackAR(p.id, p.name));
+
+    list.appendChild(a);
+  });
+</script>
+
+</body>
+</html>
