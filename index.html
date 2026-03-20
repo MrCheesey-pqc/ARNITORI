@@ -154,7 +154,18 @@
       margin-top: .7rem;
     }
     .card-price { font-size: .88rem; font-weight: 500; }
-
+    .btn-or {
+      display: inline-flex; align-items: center; gap: .34rem;
+      background: var(--accent); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .42rem .85rem; border-radius: 3px;
+      border: none; cursor: pointer; text-decoration: none;
+      transition: background .2s, transform .12s;
+      white-space: nowrap;
+    }
+    
     .btn-ar {
       display: inline-flex; align-items: center; gap: .34rem;
       background: var(--accent); color: #fff;
@@ -291,6 +302,7 @@
         </div>
         <div class="card-foot">
           <span class="card-price">${p.price}</span>
+          <span class="btn-or">Link</span>
           <span class="btn-ar">${arSVG} Xem AR</span>
         </div>
       </div>`;
