@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NITORI – Thử Sofa bằng AR</title>
 
-  <!-- ── Google Analytics GA4 ──────────────────────────────────────
-       THAY "G-XXXXXXXXXX" bằng Measurement ID thực tế của bạn
-  ──────────────────────────────────────────────────────────────── -->
-
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDYEKN5WT6"></script>
 <script>
@@ -18,17 +14,7 @@
   gtag('js', new Date());
 
   gtag('config', 'G-PDYEKN5WT6');
-
-
-    // Gửi custom event khi nhấn nút AR
-    function trackAR(productId, productName) {
-      gtag('event', 'ar_view_click', {
-        event_category: 'AR Experience',
-        event_label: productName,
-        product_id: productId
-      });
-    }
-  </script>
+</script>
 
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 
