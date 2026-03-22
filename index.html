@@ -1,600 +1,194 @@
 <!DOCTYPE html>
 
-<!-- 
-  Khai báo loại tài liệu là HTML5.
-  Trình duyệt dựa vào dòng này để hiển thị đúng chuẩn.
--->
-
 <html lang="vi">
-<!-- lang="vi" báo trình duyệt trang này dùng tiếng Việt -->
-
 <head>
-  <!-- ═══════════════════════════════════════════════════════════
-    <head> chứa các thông tin cấu hình, không hiển thị trên trang.
-  ═══════════════════════════════════════════════════════════ -->
-
   <meta charset="UTF-8"/>
-  <!-- charset="UTF-8": bộ mã ký tự hỗ trợ tiếng Việt, emoji, v.v. -->
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!--
-    viewport: kiểm soát cách trang hiển thị trên điện thoại.
-    - width=device-width  → chiều rộng trang = chiều rộng màn hình thật
-    - initial-scale=1.0   → không zoom khi mới mở trang
-  -->
-
   <title>NITORI – Trải nghiệm AR</title>
-  <!-- Tiêu đề hiển thị trên tab trình duyệt -->
 
-  <!-- ═══════════════════════════════════════════════════════════
-    PHẦN 1 — GOOGLE ANALYTICS 4 (GA4)
-    Dùng để đo lượt truy cập và lượt nhấn AR.
-  ═══════════════════════════════════════════════════════════ -->
+  <!-- CSS giao diện -->
 
-  <!-- 
-    Tải thư viện GA4 từ Google (async = tải ngầm, không làm chậm trang).
-    G-XXXXXXXXXX = Measurement ID của bạn — cần thay bằng ID thật.
-  -->
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <!-- ══════════════════════════════════════════════════
+    GOOGLE ANALYTICS 4
+    ⚠️ Thay G-XXXXXXXXXX bằng Measurement ID thật của bạn
+  ══════════════════════════════════════════════════ -->
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 
   <script>
-    // dataLayer: hàng đợi chứa tất cả sự kiện gửi lên Google Analytics
     window.dataLayer = window.dataLayer || [];
-
-    // gtag(): hàm trung gian để đẩy dữ liệu vào dataLayer
     function gtag(){ dataLayer.push(arguments); }
-
-    // Ghi thời điểm khởi động GA (dùng để tính thời gian phiên)
     gtag('js', new Date());
-
-    // Kết nối trang này với tài khoản GA4 theo Measurement ID
-    // ⚠️ THAY G-XXXXXXXXXX bằng ID thật của bạn (2 chỗ trong file này)
-    gtag('config', 'G-XXXXXXXXXX');
-
-    /*
-      trackAR(productId, productName)
-      ─────────────────────────────────
-      Hàm này được gọi mỗi khi khách nhấn vào một sản phẩm.
-      Nó gửi một "custom event" lên GA4 để bạn biết:
-        - Ai nhấn vào sản phẩm nào
-        - Bao nhiêu lượt nhấn mỗi sản phẩm
-
-      Tham số:
-        productId   → mã định danh sản phẩm, vd: "sofa-hana-3s"
-        productName → tên hiển thị,          vd: "Sofa Hana"
-    */
-    function trackAR(productId, productName) {
-      gtag('event', 'ar_view_click', {
-        // event_category: nhóm sự kiện (để lọc trong GA4)
-        event_category: 'AR',
-
-        // event_label: nhãn hiển thị trong báo cáo GA4
-        event_label: productName,
-
-        // product_id: dùng để lọc từng sản phẩm riêng lẻ
-        product_id: productId
-      });
-    }
+    gtag('config', 'G-XXXXXXXXXX'); /* ⚠️ Thay ID ở đây */
   </script>
-
-  <!-- ═══════════════════════════════════════════════════════════
-    PHẦN 2 — CSS (GIAO DIỆN)
-    Toàn bộ màu sắc, kích thước, layout của trang.
-  ═══════════════════════════════════════════════════════════ -->
-
-  <style>
-
-    /* ── Reset mặc định trình duyệt ────────────────────────────
-       Mỗi trình duyệt tự thêm margin/padding vào các thẻ HTML.
-       Dòng này xóa hết để mình kiểm soát hoàn toàn layout.
-       box-sizing: border-box → padding/border tính vào trong width,
-       không làm tràn ra ngoài.
-    ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-
-    /* ── Biến màu toàn cục (:root) ─────────────────────────────
-       :root = phạm vi toàn trang.
-       Khai báo biến CSS một lần ở đây, dùng lại ở mọi nơi bằng var(--tên-biến).
-       Khi muốn đổi màu, chỉ cần sửa 1 chỗ ở đây là xong.
-    ── */
-    :root {
-      --green:       #1a5c38;  /* Xanh lá đặc trưng Nitori — dùng cho nút, accent */
-      --green-dark:  #134a2c;  /* Xanh đậm hơn — dùng khi nhấn nút (trạng thái :active) */
-      --green-light: #eef5f1;  /* Xanh rất nhạt — dùng cho nền hướng dẫn, pill AR */
-
-      --black:     #1a1a1a;   /* Gần đen — màu chữ chính */
-      --gray-dark: #444;      /* Xám đậm — chữ phụ quan trọng */
-      --gray:      #767676;   /* Xám trung — chữ mô tả, subtitle */
-      --gray-line: #e0e0e0;   /* Xám rất nhạt — viền, đường kẻ phân cách */
-
-      --bg:    #f5f5f5;        /* Nền trang tổng — xám trắng nhẹ */
-      --white: #ffffff;        /* Trắng tinh — nền card, header, footer */
-    }
-
-
-    /* ── <body>: Cài đặt mặc định toàn trang ──────────────────
-       Mọi thẻ bên trong <body> đều kế thừa các thuộc tính này
-       trừ khi bị ghi đè bởi class riêng.
-    ── */
-    body {
-      background: var(--bg);       /* Nền trang = xám nhạt */
-      color: var(--black);         /* Màu chữ mặc định = gần đen */
-      font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-      /*
-        font-family: danh sách font ưu tiên (trình duyệt dùng cái đầu nếu có).
-        -apple-system    → font gốc của iOS/macOS (San Francisco)
-        'Helvetica Neue' → fallback cho macOS cũ
-        Arial            → fallback cho Windows
-        sans-serif       → font không chân, fallback cuối cùng
-        → Nitori Vietnam dùng font hệ thống, không tải font ngoài.
-      */
-      font-size: 14px;   /* Cỡ chữ gốc — các đơn vị rem/em tính từ con số này */
-      line-height: 1.5;  /* Khoảng cách dòng = 1.5 lần cỡ chữ → dễ đọc */
-    }
-
-
-    /* ════════════════════════════════════════════════════════════
-       HEADER — Thanh điều hướng cố định trên cùng
-    ════════════════════════════════════════════════════════════ */
-
-    header {
-      background: var(--white);
-      border-bottom: 1px solid var(--gray-line); /* Đường kẻ mỏng phía dưới header */
-      position: sticky; /* Dính theo khi cuộn trang */
-      top: 0;           /* Dính ở cạnh trên */
-      z-index: 50;      /* Nằm trên mọi phần tử khác (số càng cao càng lên trên) */
-    }
-
-    .header-top {
-      display: flex;              /* Bố cục hàng ngang */
-      align-items: center;        /* Canh giữa theo chiều dọc */
-      justify-content: space-between; /* Logo trái, tag phải */
-      padding: .65rem 1rem;       /* Khoảng đệm trong: trên/dưới .65rem, trái/phải 1rem */
-      max-width: 600px;           /* Giới hạn chiều rộng tối đa */
-      margin: 0 auto;             /* Căn giữa trang khi màn hình rộng */
-    }
-
-    /* Logo dạng ảnh */
-    .logo img {
-      height: 28px;    /* Chiều cao cố định, chiều rộng tự co giãn */
-      display: block;  /* Xóa khoảng trắng mặc định dưới ảnh */
-    }
-
-    /* Logo dạng chữ — hiện khi ảnh không load được (onerror) */
-    .logo-text {
-      font-size: 1.4rem; font-weight: 700;
-      letter-spacing: .04em;   /* Giãn chữ nhẹ */
-      color: var(--black);
-      text-decoration: none;   /* Bỏ gạch chân của thẻ <a> */
-    }
-
-    /* Tag "AR Experience" góc phải header */
-    .header-ar-tag {
-      display: flex; align-items: center; gap: .3rem;
-      background: var(--green); color: var(--white);
-      font-size: .65rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; /* Chữ in hoa */
-      padding: .28rem .65rem;
-      border-radius: 2px; /* Bo góc nhẹ */
-    }
-    .header-ar-tag svg { width: 11px; height: 11px; fill: #fff; }
-
-
-    /* ════════════════════════════════════════════════════════════
-       BANNER — Vùng tiêu đề xanh lá phía trên danh sách
-    ════════════════════════════════════════════════════════════ */
-
-    .banner {
-      background: var(--green);
-      padding: 1.4rem 1rem 1.2rem;
-      text-align: center;
-      max-width: 600px; margin: 0 auto;
-    }
-
-    .banner h1 {
-      font-size: 1.3rem; font-weight: 700;
-      color: var(--white);
-      margin-bottom: .3rem;
-      letter-spacing: -.01em; /* Co chữ lại chút — tiêu đề lớn trông gọn hơn */
-    }
-
-    .banner p {
-      font-size: .82rem;
-      color: rgba(255,255,255,.85); /* Trắng 85% — mờ hơn tiêu đề để tạo thứ bậc */
-      margin-bottom: 1rem;
-      line-height: 1.55;
-    }
-
-    /* Thanh 3 bước hướng dẫn bên trong banner */
-    .steps-row {
-      display: flex; justify-content: center;
-      background: rgba(0,0,0,.15); /* Nền đen 15% trong suốt — tối hơn xanh lá một chút */
-      border-radius: 4px;
-      overflow: hidden; /* Cắt bo góc cho phần tử con */
-    }
-
-    .step-item {
-      flex: 1; /* Chia đều 3 cột */
-      display: flex; align-items: center; justify-content: center; gap: .35rem;
-      padding: .55rem .4rem;
-      font-size: .72rem; color: var(--white); font-weight: 500;
-      border-right: 1px solid rgba(255,255,255,.15); /* Đường ngăn giữa các bước */
-    }
-    .step-item:last-child { border-right: none; } /* Bước cuối không có đường ngăn */
-
-    /* Số tròn (1, 2, 3) */
-    .step-num {
-      width: 18px; height: 18px; border-radius: 50%; /* Hình tròn */
-      background: var(--white); color: var(--green);
-      font-size: .65rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; /* Không co lại khi không đủ chỗ */
-    }
-
-
-    /* ════════════════════════════════════════════════════════════
-       TRANG 1 — Danh sách sản phẩm
-       Mặc định: page-list hiện, page-ar ẩn.
-       JavaScript sẽ đổi display để chuyển trang.
-    ════════════════════════════════════════════════════════════ */
-
-    #page-list { display: block; } /* Hiện mặc định */
-    #page-ar   { display: none;  } /* Ẩn mặc định */
-
-    /* Nhãn tiêu đề nhỏ trên danh sách ("Sofa hỗ trợ AR · ● AR Ready") */
-    .section-label {
-      max-width: 600px; margin: 0 auto;
-      padding: .9rem 1rem .5rem;
-      font-size: .72rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      color: var(--gray);
-      border-bottom: 1px solid var(--gray-line);
-      background: var(--white);
-    }
-
-    /* Khung chứa toàn bộ danh sách card */
-    .list {
-      max-width: 600px; margin: 0 auto;
-      background: var(--white);
-    }
-
-    /* ── Mỗi card sản phẩm ── */
-    .card {
-      display: flex; align-items: stretch; /* Ảnh và nội dung cùng chiều cao */
-      border-bottom: 1px solid var(--gray-line);
-      cursor: pointer; /* Con trỏ hình bàn tay khi rê chuột */
-
-      /* Animation xuất hiện khi trang load:
-         opacity: 0        → ban đầu trong suốt (ẩn)
-         translateY(8px)   → dịch xuống 8px
-         animation: up     → chạy keyframe "up" (định nghĩa ở cuối CSS)
-         .4s ease forwards → 0.4 giây, giảm tốc cuối, giữ trạng thái khi xong
-      */
-      opacity: 0;
-      transform: translateY(8px);
-      animation: up .4s ease forwards;
-
-      transition: background .15s; /* Hiệu ứng đổi màu nền khi tap */
-    }
-
-    /* Delay khác nhau cho mỗi card → hiệu ứng xuất hiện lần lượt */
-    .card:nth-child(1){animation-delay:.03s}
-    .card:nth-child(2){animation-delay:.08s}
-    .card:nth-child(3){animation-delay:.13s}
-    .card:nth-child(4){animation-delay:.18s}
-    .card:nth-child(5){animation-delay:.23s}
-    .card:nth-child(6){animation-delay:.28s}
-
-    .card:active { background: #fafafa; } /* Màu nền khi đang nhấn */
-
-    /* Ảnh sản phẩm bên trái card */
-    .card-img {
-      width: 100px;      /* Chiều rộng cố định */
-      flex-shrink: 0;    /* Không co lại khi nội dung bên phải cần thêm chỗ */
-      background: var(--bg);
-      overflow: hidden;  /* Cắt ảnh khi zoom */
-    }
-    .card-img img {
-      width: 100%; height: 100%;
-      object-fit: cover; /* Ảnh luôn phủ kín khung, cắt bỏ phần thừa */
-      display: block;
-      transition: transform .3s; /* Hiệu ứng zoom khi hover */
-    }
-    .card:hover .card-img img { transform: scale(1.05); } /* Zoom 5% khi hover */
-
-    /* Phần nội dung bên phải ảnh */
-    .card-body {
-      flex: 1; /* Chiếm toàn bộ chiều rộng còn lại */
-      padding: .8rem .9rem;
-      display: flex; flex-direction: column; justify-content: space-between;
-      /* justify-content: space-between → tên/mô tả trên cùng, giá/pill dưới cùng */
-    }
-
-    .card-name {
-      font-size: .92rem; font-weight: 700;
-      color: var(--black); margin-bottom: .15rem;
-    }
-
-    .card-sub {
-      font-size: .75rem; color: var(--gray);
-      margin-bottom: .5rem; /* Tạo khoảng cách trước phần dưới */
-    }
-
-    /* Hàng dưới: giá bên trái, pill AR + mũi tên bên phải */
-    .card-bottom {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .card-price {
-      font-size: .9rem; font-weight: 700;
-      color: var(--green); /* Giá nổi bật bằng màu xanh Nitori */
-    }
-
-    /* Pill nhỏ "AR" bên phải giá */
-    .card-ar-pill {
-      display: flex; align-items: center; gap: .25rem;
-      background: var(--green-light); color: var(--green);
-      font-size: .65rem; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: .25rem .55rem; border-radius: 2px;
-      border: 1px solid rgba(26,92,56,.2);
-    }
-    .card-ar-pill svg { width: 10px; height: 10px; fill: var(--green); }
-
-    /* Mũi tên "›" gợi ý có thể nhấn vào */
-    .card-chevron {
-      color: var(--gray-line); font-size: 1rem; margin-left: .5rem;
-    }
-
-
-    /* ════════════════════════════════════════════════════════════
-       TRANG 2 — Chi tiết AR (hiện sau khi chọn sản phẩm)
-    ════════════════════════════════════════════════════════════ */
-
-    /* Thanh trên: nút quay lại + tên sản phẩm */
-    .ar-header-row {
-      max-width: 600px; margin: 0 auto;
-      background: var(--white);
-      border-bottom: 1px solid var(--gray-line);
-      padding: .7rem 1rem;
-      display: flex; align-items: center; gap: .6rem;
-    }
-
-    /* Nút "← Quay lại" */
-    .back-btn {
-      background: none; border: none; cursor: pointer;
-      display: flex; align-items: center; gap: .3rem;
-      font-size: .8rem; color: var(--green); padding: 0;
-      font-family: inherit; /* Kế thừa font của body, không dùng font mặc định button */
-    }
-    .back-btn svg { width: 14px; height: 14px; stroke: var(--green); fill: none; }
-
-    /* Tên sản phẩm hiển thị trên thanh header trang 2 */
-    .ar-page-title { font-size: .85rem; font-weight: 700; color: var(--black); }
-
-    /* Khung chứa toàn bộ nội dung trang 2 */
-    .ar-body { max-width: 600px; margin: 0 auto; background: var(--white); }
-
-    /* Ảnh sản phẩm lớn */
-    .ar-img {
-      width: 100%;
-      aspect-ratio: 4/3; /* Tỉ lệ chiều rộng:cao = 4:3, tự tính chiều cao */
-      background: var(--bg); overflow: hidden;
-    }
-    .ar-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    /* Tên + mô tả sản phẩm */
-    .ar-info { padding: 1rem; border-bottom: 1px solid var(--gray-line); }
-    .ar-name { font-size: 1.05rem; font-weight: 700; margin-bottom: .2rem; }
-    .ar-sub  { font-size: .78rem; color: var(--gray); }
-
-    /* Hộp hướng dẫn xanh nhạt */
-    .ar-guide {
-      padding: .85rem 1rem;
-      background: var(--green-light);
-      border-left: 3px solid var(--green); /* Viền trái xanh đậm làm điểm nhấn */
-    }
-    .ar-guide-title {
-      font-size: .72rem; font-weight: 700; color: var(--green);
-      text-transform: uppercase; letter-spacing: .08em;
-      margin-bottom: .45rem;
-    }
-    .ar-guide ol {
-      padding-left: 1.1rem; /* Thụt vào để số thứ tự hiện ra */
-      font-size: .8rem; color: var(--gray-dark);
-      display: flex; flex-direction: column; gap: .2rem;
-    }
-    .ar-guide-en {
-      margin-top: .5rem; font-size: .72rem; color: var(--gray);
-      font-style: italic; /* Chú thích tiếng Anh in nghiêng */
-    }
-
-
-    /* ── Hàng nút bấm cố định dưới cùng ── */
-    .btn-row {
-      display: flex; gap: .6rem;
-      padding: 1rem;
-      background: var(--white);
-      border-top: 1px solid var(--gray-line);
-      position: sticky; /* Cố định khi cuộn */
-      bottom: 0;        /* Dính ở cạnh dưới màn hình */
-    }
-
-    /* Nút "Trang sản phẩm" — viền xám, chữ đen */
-    .btn-sp {
-      flex: 1; /* Chiếm 1 phần */
-      display: flex; align-items: center; justify-content: center; gap: .35rem;
-      background: var(--white); color: var(--black);
-      font-size: .8rem; font-weight: 600;
-      padding: .75rem .6rem; border-radius: 3px;
-      border: 1.5px solid var(--gray-line);
-      text-decoration: none; cursor: pointer;
-      transition: border-color .2s; /* Hiệu ứng đổi màu viền khi hover */
-      font-family: inherit;
-    }
-    .btn-sp:hover { border-color: var(--gray); }
-    .btn-sp svg { width: 13px; height: 13px; stroke: var(--black); fill: none; flex-shrink: 0; }
-
-    /* Nút "Bắt đầu AR" — nền xanh, chữ trắng, to hơn */
-    .btn-ar-start {
-      flex: 1.6; /* Chiếm 1.6 phần → rộng hơn nút trang SP */
-      display: flex; align-items: center; justify-content: center; gap: .4rem;
-      background: var(--green); color: var(--white);
-      font-size: .82rem; font-weight: 700;
-      padding: .75rem .6rem; border-radius: 3px;
-      border: none; cursor: pointer; text-decoration: none;
-      transition: background .2s, transform .1s;
-      font-family: inherit;
-    }
-    .btn-ar-start:active {
-      transform: scale(.97);        /* Co lại 3% khi nhấn — cảm giác vật lý */
-      background: var(--green-dark); /* Đậm hơn khi nhấn */
-    }
-    .btn-ar-start svg { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
-
-    /* Nhãn song ngữ bên trong nút (Việt + Anh) */
-    .bilingual {
-      display: flex; flex-direction: column; /* Xếp dọc */
-      line-height: 1.2; text-align: left;
-    }
-    .bilingual .vi { font-size: .8rem; }
-    .bilingual .en { font-size: .65rem; opacity: .75; font-weight: 400; }
-
-
-    /* ── Footer ── */
-    footer {
-      max-width: 600px; margin: 0 auto;
-      text-align: center; padding: 1.5rem 1rem 2rem;
-      font-size: .72rem; color: var(--gray);
-      border-top: 1px solid var(--gray-line);
-      background: var(--white);
-    }
-
-
-    /* ── Keyframe animation "up" ──
-       Dùng bởi .card để xuất hiện trượt lên từ dưới.
-       @keyframes định nghĩa trạng thái từ → đến.
-       "to" = trạng thái kết thúc (opacity:1, translateY:0 = về vị trí gốc)
-    ── */
-    @keyframes up { to { opacity: 1; transform: translateY(0); } }
-
-
-    /* ── Media query: màn hình >= 480px ──
-       Khi màn hình rộng hơn điện thoại nhỏ, ảnh card rộng thêm.
-    ── */
-    @media (min-width: 480px) {
-      .card-img { width: 130px; }
-    }
-
-  </style>
 
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-  HTML — CẤU TRÚC TRANG
-═══════════════════════════════════════════════════════════ -->
-
-<!-- HEADER: thanh cố định trên cùng -->
+<!-- ════════════════════════════════════════════════════════
+  HEADER — Cố định trên cùng
+════════════════════════════════════════════════════════ -->
 
 <header>
   <div class="header-top">
-
-```
-<!-- Logo: thử load ảnh thật từ CDN Nitori -->
-<a href="https://www.nitori.com.vn" target="_blank">
-  <img class="logo"
-       src="https://www.nitori.com.vn/cdn/shop/files/Untitled-1_673x179.png?v=1721612006"
-       alt="NITORI"
-       style="height:26px;"
-       onerror="this.style.display='none'; this.nextElementSibling.style.display='block'"/>
-  <!--
-    onerror: nếu ảnh không tải được (vd: offline),
-    ẩn thẻ <img> và hiện thẻ <span> chữ "NITORI" kế bên.
-  -->
-  <span class="logo-text" style="display:none;">NITORI</span>
-</a>
-
-<!-- Tag nhỏ góc phải -->
-<div class="header-ar-tag">
-  <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
-  AR Experience
-</div>
-```
-
+    <a href="https://www.nitori.com.vn" target="_blank">
+      <img class="logo-img"
+           src="https://www.nitori.com.vn/cdn/shop/files/Untitled-1_673x179.png?v=1721612006"
+           alt="NITORI"
+           onerror="this.style.display='none'; document.querySelector('.logo-text').style.display='block'"/>
+      <span class="logo-text">NITORI</span>
+    </a>
+    <div class="header-ar-tag">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+      AR Experience
+    </div>
   </div>
 </header>
 
-<!-- BANNER: tiêu đề + 3 bước hướng dẫn -->
+<!-- ════════════════════════════════════════════════════════
+  BANNER — Tiêu đề + chỉ báo 3 bước
+════════════════════════════════════════════════════════ -->
 
-<div class="banner" style="background:var(--green)">
+<div class="banner">
   <h1>Thử sofa ngay tại nhà bạn</h1>
   <p>Xem sofa trong không gian thực — không cần đến cửa hàng</p>
   <div class="steps-row">
-    <div class="step-item"><span class="step-num">1</span>Chọn mẫu</div>
-    <div class="step-item"><span class="step-num">2</span>Nhấn Xem AR</div>
-    <div class="step-item"><span class="step-num">3</span>Đặt vào phòng</div>
+    <div class="step-item active"><span class="step-num">1</span>Chọn mẫu</div>
+    <div class="step-item"><span class="step-num">2</span>Chọn tùy chọn</div>
+    <div class="step-item"><span class="step-num">3</span>Xem AR</div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-  TRANG 1: DANH SÁCH SẢN PHẨM
-  id="page-list" → JavaScript dùng id này để ẩn/hiện trang
-══════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════
+  TRANG 1 — DANH SÁCH SẢN PHẨM
+  Hiện mặc định. Ẩn khi chuyển trang bằng JS.
+════════════════════════════════════════════════════════ -->
 
 <div id="page-list">
   <div class="section-label">
     Sofa hỗ trợ AR · <span style="color:var(--green)">●</span> AR Ready
   </div>
 
-  <!-- Danh sách card được tạo động bởi JavaScript bên dưới -->
+  <!-- Các card sản phẩm được tạo bởi js/app.js → renderProductList() -->
 
   <div class="list" id="list"></div>
 
   <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
 </div>
 
-<!-- ══════════════════════════════════
-  TRANG 2: CHI TIẾT AR
-  Ẩn mặc định (display:none trong CSS).
-  Hiện khi khách chọn 1 sản phẩm.
-  Các thẻ có id= sẽ được JavaScript điền nội dung vào.
-══════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════
+  TRANG 2 — CHỌN BIẾN THỂ (chất liệu / kích thước / màu)
+  Ẩn mặc định (display:none). JS gọi showPage('page-variant') để hiện.
+════════════════════════════════════════════════════════ -->
 
-<div id="page-ar">
+<div id="page-variant" style="display:none">
 
-  <!-- Thanh trên: quay lại + tên sản phẩm -->
+  <!-- Thanh trên: nút quay lại + tên sản phẩm -->
 
-  <div class="ar-header-row">
-    <button class="back-btn" onclick="goBack()">
-      <!-- onclick="goBack()" → gọi hàm goBack() khi nhấn nút -->
+  <div class="page-header">
+    <button class="back-btn" id="btn-back-to-list">
       <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"/>
       </svg>
       Quay lại
     </button>
     <span style="color:var(--gray-line)">|</span>
-    <!-- Tên sản phẩm đang xem — được điền bởi JavaScript -->
-    <span class="ar-page-title" id="ar-page-title">Xem AR</span>
+    <span class="page-title" id="variant-page-title"></span>
   </div>
 
-  <div class="ar-body">
+  <div class="variant-body">
 
 ```
-<!-- Ảnh sản phẩm — src được điền bởi JavaScript -->
-<div class="ar-img">
+<!-- Ảnh sản phẩm — thay đổi theo biến thể được chọn -->
+<div class="variant-img">
+  <img id="variant-img" src="" alt=""/>
+</div>
+
+<!-- Tên + nhãn biến thể đang chọn -->
+<div class="variant-info">
+  <div class="variant-name" id="variant-name"></div>
+  <div class="variant-selected-label" id="variant-selected-label"></div>
+</div>
+
+<!-- BỘ LỌC 1: Chất liệu -->
+<div class="filter-section">
+  <div class="filter-title">Chất liệu · Material</div>
+  <!-- Các nút được render bởi js/app.js → renderFilterGroup() -->
+  <div class="filter-options" id="filter-material"></div>
+</div>
+
+<!-- BỘ LỌC 2: Kích thước -->
+<div class="filter-section">
+  <div class="filter-title">Kích thước · Size</div>
+  <div class="filter-options" id="filter-size"></div>
+</div>
+
+<!-- BỘ LỌC 3: Màu sắc -->
+<div class="filter-section">
+  <div class="filter-title">Màu sắc · Color</div>
+  <div class="filter-options" id="filter-color"></div>
+</div>
+
+<!-- Nút hành động -->
+<div class="btn-row">
+  <!-- Nút quay lại trang 1 -->
+  <button class="btn-secondary" id="btn-back-to-list-2"
+          onclick="document.getElementById('btn-back-to-list').click()">
+    ← Quay lại
+  </button>
+
+  <!-- Nút tiếp theo → trang AR (disabled cho đến khi chọn đủ) -->
+  <button class="btn-primary disabled" id="btn-next-ar">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+    <div class="bilingual">
+      <span class="vi">Tiếp theo → Xem AR</span>
+      <span class="en">Next → View AR</span>
+    </div>
+  </button>
+</div>
+```
+
+  </div>
+  <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+  TRANG 3 — XEM AR
+  Hiện sau khi đã chọn đủ biến thể và nhấn "Tiếp theo".
+════════════════════════════════════════════════════════ -->
+
+<div id="page-ar" style="display:none">
+
+  <!-- Thanh trên: quay về trang 2 -->
+
+  <div class="page-header">
+    <button class="back-btn" id="btn-back-to-variant">
+      <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Quay lại
+    </button>
+    <span style="color:var(--gray-line)">|</span>
+    <span class="page-title" id="ar-page-title"></span>
+  </div>
+
+  <div class="variant-body">
+
+```
+<!-- Ảnh biến thể đã chọn -->
+<div class="variant-img">
   <img id="ar-img" src="" alt=""/>
 </div>
 
-<!-- Tên và mô tả — được điền bởi JavaScript -->
-<div class="ar-info">
-  <div class="ar-name" id="ar-name"></div>
-  <div class="ar-sub"  id="ar-sub"></div>
+<!-- Tên + biến thể đã chọn -->
+<div class="variant-info">
+  <div class="variant-name" id="ar-name"></div>
+  <div class="variant-selected-label" id="ar-sub" style="color:var(--gray)"></div>
 </div>
 
-<!-- Hướng dẫn sử dụng AR -->
+<!-- Hướng dẫn xem AR -->
 <div class="ar-guide">
   <div class="ar-guide-title">Hướng dẫn xem AR</div>
   <ol>
@@ -607,11 +201,11 @@
   </div>
 </div>
 
-<!-- Hàng 2 nút bấm cố định dưới cùng -->
+<!-- 2 nút: trang sản phẩm + bắt đầu AR -->
 <div class="btn-row">
 
-  <!-- Nút 1: Trang sản phẩm — href được điền bởi JavaScript -->
-  <a id="product-link" href="#" target="_blank" rel="noopener" class="btn-sp">
+  <!-- Nút trang sản phẩm — href điền bởi JS -->
+  <a id="product-link" href="#" target="_blank" rel="noopener" class="btn-secondary">
     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
       <polyline points="15 3 21 3 21 9"/>
@@ -623,8 +217,8 @@
     </div>
   </a>
 
-  <!-- Nút 2: Bắt đầu AR — href được điền bởi JavaScript -->
-  <a id="ar-link" href="#" target="_blank" rel="noopener" class="btn-ar-start">
+  <!-- Nút AR — href điền bởi JS -->
+  <a id="ar-link" href="#" target="_blank" rel="noopener" class="btn-primary">
     <svg viewBox="0 0 24 24">
       <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/>
     </svg>
@@ -638,184 +232,18 @@
 ```
 
   </div>
-
   <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-  JAVASCRIPT — XỬ LÝ LOGIC
-═══════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════
+  SCRIPT — Load theo thứ tự:
+  1. data/products.js  → khai báo mảng PRODUCTS
+  2. js/app.js         → dùng PRODUCTS để render và xử lý logic
+════════════════════════════════════════════════════════ -->
 
-<script>
+<script src="data/products.js"></script>
 
-  /*
-    ── Mảng dữ liệu sản phẩm ────────────────────────────────────
-    Mỗi phần tử là 1 object chứa thông tin 1 sản phẩm.
-    Khi muốn thêm/bớt/sửa sản phẩm, chỉ cần chỉnh ở đây.
-
-    Các trường (field) của mỗi sản phẩm:
-      id          → mã định danh duy nhất, dùng để tracking GA4
-      name        → tên hiển thị trên trang
-      sub         → mô tả ngắn (số chỗ, chất liệu)
-      price       → giá hiển thị (chuỗi, đã có ₫)
-      img         → URL ảnh sản phẩm
-      ar_url      → link AR trên rittai-service.com  ← THAY LINK THẬT
-      product_url → link trang sản phẩm trên nitori.com.vn ← THAY LINK THẬT
-  */
-  const products = [
-    {
-      id: "sofa-hana-3s",
-      name: "Sofa Hana",
-      sub: "3 chỗ · Vải cao cấp · 3 màu",
-      price: "12.990.000 ₫",
-      img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    },
-    {
-      id: "sofa-nori-l",
-      name: "Sofa Nori L-Shape",
-      sub: "Góc chữ L · Da tổng hợp",
-      price: "18.275.000 ₫",
-      img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    },
-    {
-      id: "sofa-yuki-2s",
-      name: "Sofa Yuki",
-      sub: "2 chỗ · Nỉ mềm",
-      price: "8.490.000 ₫",
-      img: "https://images.unsplash.com/photo-1567538096621-38d2284b23ff?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    },
-    {
-      id: "sofa-sora-1s",
-      name: "Sofa Sora Studio",
-      sub: "1 chỗ · Khung gỗ sồi",
-      price: "6.990.000 ₫",
-      img: "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    },
-    {
-      id: "sofa-kaze-recline",
-      name: "Sofa Kaze Recline",
-      sub: "3 chỗ · Ngả lưng điều chỉnh",
-      price: "15.840.000 ₫",
-      img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    },
-    {
-      id: "sofa-tsuki-bed",
-      name: "Sofa Tsuki",
-      sub: "Sofa giường · Đa năng",
-      price: "16.500.000 ₫",
-      img: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400&auto=format&fit=crop",
-      ar_url:      "https://rittai-service.com/THAY_LINK_AR",
-      product_url: "https://www.nitori.com.vn/THAY_LINK_SP"
-    }
-  ];
-
-
-  /*
-    ── Icon AR dạng SVG ──────────────────────────────────────────
-    Lưu thành chuỗi để tái sử dụng trong từng card.
-    Dùng template literal (dấu backtick `) để viết HTML nhiều dòng.
-  */
-  const arSVG = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:var(--green)">
-    <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/>
-  </svg>`;
-
-
-  /*
-    ── Render danh sách card ─────────────────────────────────────
-    Lấy thẻ <div id="list"> từ HTML.
-    Lặp qua mảng products, tạo 1 card cho mỗi sản phẩm,
-    rồi thêm vào trong <div id="list">.
-  */
-  const listEl = document.getElementById('list');
-
-  products.forEach(p => {
-    // Tạo thẻ <div> mới cho mỗi sản phẩm
-    const div = document.createElement('div');
-    div.className = 'card';
-
-    // Điền HTML vào bên trong card
-    // ${p.img}, ${p.name}, ... → chèn giá trị từ object sản phẩm p
-    div.innerHTML = `
-      <div class="card-img">
-        <img src="${p.img}" alt="${p.name}" loading="lazy"/>
-        <!-- loading="lazy": chỉ tải ảnh khi gần đến vùng hiển thị → trang load nhanh hơn -->
-      </div>
-      <div class="card-body">
-        <div>
-          <div class="card-name">${p.name}</div>
-          <div class="card-sub">${p.sub}</div>
-        </div>
-        <div class="card-bottom">
-          <span class="card-price">${p.price}</span>
-          <div style="display:flex;align-items:center;gap:.3rem">
-            <span class="card-ar-pill">${arSVG} AR</span>
-            <span class="card-chevron">›</span>
-          </div>
-        </div>
-      </div>`;
-
-    // Gắn sự kiện click: khi nhấn vào card → gọi openAR(p)
-    div.addEventListener('click', () => openAR(p));
-
-    // Thêm card vào danh sách
-    listEl.appendChild(div);
-  });
-
-
-  /*
-    ── openAR(p) ────────────────────────────────────────────────
-    Được gọi khi khách nhấn vào một card sản phẩm.
-    Tham số p = object sản phẩm được chọn.
-
-    Nhiệm vụ:
-    1. Gửi sự kiện tracking lên GA4
-    2. Điền thông tin sản phẩm vào trang 2
-    3. Chuyển từ trang 1 sang trang 2
-  */
-  function openAR(p) {
-    // 1. Tracking GA4
-    trackAR(p.id, p.name);
-
-    // 2. Điền nội dung vào các thẻ có id= trong trang 2
-    document.getElementById('ar-img').src             = p.img;
-    document.getElementById('ar-img').alt             = p.name;
-    document.getElementById('ar-name').textContent    = p.name;
-    document.getElementById('ar-sub').textContent     = p.sub;
-    document.getElementById('ar-page-title').textContent = p.name;
-    document.getElementById('ar-link').href           = p.ar_url;
-    document.getElementById('product-link').href      = p.product_url;
-
-    // 3. Ẩn trang 1, hiện trang 2
-    document.getElementById('page-list').style.display = 'none';
-    document.getElementById('page-ar').style.display   = 'block';
-
-    // Cuộn về đầu trang
-    window.scrollTo(0, 0);
-  }
-
-
-  /*
-    ── goBack() ─────────────────────────────────────────────────
-    Được gọi khi nhấn nút "← Quay lại".
-    Ẩn trang 2, hiện lại trang 1.
-  */
-  function goBack() {
-    document.getElementById('page-ar').style.display   = 'none';
-    document.getElementById('page-list').style.display = 'block';
-    window.scrollTo(0, 0);
-  }
-
-</script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
