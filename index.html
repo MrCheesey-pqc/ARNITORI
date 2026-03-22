@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NITORI – Xem AR</title>
+
+  <!-- GA4: thay G-XXXXXXXXXX -->
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+    function trackAR(productId, productName) {
+      gtag('event', 'ar_view_click', {
+        event_category: 'AR',
+        event_label: productName,
+        product_id: productId
+      });
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f5f2; --surface: #fff; --border: #e8e3dc;
+      --text: #1a1714; --muted: #8c867e;
+      --accent: #2d5a3d; --accent-light: #edf3ef;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; }
+
+```
+/* HEADER */
+header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.logo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; letter-spacing: .06em; }
+.ar-chip {
+  display: flex; align-items: center; gap: .35rem;
+  background: var(--accent); color: #fff;
+  font-size: .65rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  padding: .3rem .75rem; border-radius: 2px;
+}
+.ar-chip svg { width: 12px; height: 12px; fill: #fff; }
+
+/* PAGE */
+.page { display: none; max-width: 480px; margin: 0 auto; padding: 2rem 1.4rem 3rem; }
+.page.active { display: block; }
+
+/* ── TRANG DANH SÁCH ── */
+.hero { text-align: center; margin-bottom: 1.8rem; }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 7vw, 2.4rem); line-height: 1.15; margin-bottom: .6rem; }
+.hero h1 em { font-style: italic; }
+.hero p { font-size: .88rem; line-height: 1.7; color: var(--muted); max-width: 300px; margin: 0 auto 1.2rem; }
+.steps {
+  display: inline-flex; gap: 1rem;
+  background: var(--accent-light); padding: .6rem 1rem; border-radius: 4px;
+  font-size: .74rem; color: var(--accent);
+}
+.step { display: flex; align-items: center; gap: .28rem; }
+.sn {
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: .6rem; font-weight: 500;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.list { display: flex; flex-direction: column; gap: .8rem; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; display: flex; overflow: hidden;
+  cursor: pointer;
+  opacity: 0; transform: translateY(12px);
+  animation: up .45s ease forwards;
+  transition: box-shadow .2s;
+}
+.card:nth-child(1){animation-delay:.04s} .card:nth-child(2){animation-delay:.10s}
+.card:nth-child(3){animation-delay:.16s} .card:nth-child(4){animation-delay:.22s}
+.card:nth-child(5){animation-delay:.28s} .card:nth-child(6){animation-delay:.34s}
+.card:active { box-shadow: 0 0 0 2px var(--accent); }
+.card-img { width: 110px; flex-shrink: 0; background: var(--bg); overflow: hidden; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s; }
+.card:hover .card-img img { transform: scale(1.06); }
+.card-body { flex: 1; padding: .9rem; display: flex; flex-direction: column; justify-content: space-between; }
+.card-name { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: .15rem; }
+.card-sub { font-size: .73rem; color: var(--muted); }
+.card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: .7rem; }
+.card-price { font-size: .87rem; font-weight: 500; }
+.tag-ar {
+  font-size: .65rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent); border: 1px solid var(--accent);
+  padding: .28rem .65rem; border-radius: 2px;
+}
+
+/* ── TRANG TRUNG GIAN AR ── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .78rem; color: var(--muted); cursor: pointer;
+  margin-bottom: 1.4rem; background: none; border: none;
+  font-family: 'DM Sans', sans-serif; padding: 0;
+  transition: color .2s;
+}
+.back-btn:hover { color: var(--accent); }
+
+.ar-product-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; margin-bottom: 1.2rem;
+}
+.ar-product-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.ar-product-name { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: .25rem; }
+.ar-product-sub { font-size: .8rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+.ar-instructions {
+  background: var(--accent-light);
+  border-radius: 6px; padding: 1rem 1.1rem;
+  margin-bottom: 1.6rem;
+}
+.ar-instructions p {
+  font-size: .8rem; color: var(--accent); line-height: 1.65;
+}
+.ar-instructions p + p { margin-top: .4rem; }
+.ar-instructions strong { font-weight: 500; }
+
+.btn-group { display: flex; gap: .75rem; }
+
+.btn-start-ar {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  background: var(--accent); color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem; font-weight: 500; letter-spacing: .08em;
+  padding: .85rem 1rem; border-radius: 4px;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: background .2s, transform .12s;
+}
+.btn-start-ar:active { transform: scale(.97); }
+.btn-start-ar svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
+.btn-back-product {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem; font-weight: 400;
+  padding: .85rem 1.1rem; border-radius: 4px;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: border-color .2s;
+}
+.btn-back-product:hover { border-color: var(--muted); }
+
+.btn-product-page {
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  background: var(--surface); color: var(--accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem; font-weight: 500;
+  padding: .85rem 1rem; border-radius: 4px;
+  border: 1.5px solid var(--accent); cursor: pointer; text-decoration: none;
+  transition: background .2s, transform .12s;
+  white-space: nowrap;
+}
+.btn-product-page:active { transform: scale(.97); }
+.btn-product-page:hover { background: var(--accent-light); }
+.btn-product-page svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; flex-shrink: 0; }
+
+/* label song ngữ */
+.bilingual { display: flex; flex-direction: column; line-height: 1.2; }
+.bilingual .vi { font-size: .82rem; }
+.bilingual .en { font-size: .68rem; opacity: .7; }
+
+@keyframes up { to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 560px) { .card-img { width: 150px; } }
+```
+
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">NITORI</span>
+  <div class="ar-chip">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+    AR Ready
+  </div>
+</header>
+
+<!-- TRANG 1: DANH SÁCH -->
+
+<div class="page active" id="page-list">
+  <div style="padding: 2rem 1.4rem 3rem; max-width:480px; margin:0 auto;">
+    <div class="hero">
+      <h1>Đặt sofa vào<br/><em>phòng của bạn</em></h1>
+      <p>Hướng camera vào sàn nhà và xem sofa trông như thế nào — ngay trên điện thoại.</p>
+      <div class="steps">
+        <div class="step"><span class="sn">1</span>Chọn mẫu</div>
+        <div class="step"><span class="sn">2</span>Nhấn Xem AR</div>
+        <div class="step"><span class="sn">3</span>Đặt vào phòng</div>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<!-- TRANG 2: TRUNG GIAN AR -->
+
+<div class="page" id="page-ar">
+  <button class="back-btn" onclick="goBack()">← Quay lại / Back</button>
+
+  <div class="ar-product-img">
+    <img id="ar-img" src="" alt=""/>
+  </div>
+
+  <div id="ar-name" class="ar-product-name"></div>
+  <div id="ar-sub" class="ar-product-sub"></div>
+
+  <div class="ar-instructions">
+    <p><strong>Cách sử dụng AR:</strong></p>
+    <p>1. Nhấn "Bắt đầu AR" bên dưới</p>
+    <p>2. Hướng camera xuống sàn nhà</p>
+    <p>3. Chạm vào màn hình để đặt sofa</p>
+    <p style="margin-top:.6rem; font-size:.75rem; opacity:.8"><em>How to use: Tap "Start AR", point camera at the floor, tap to place the sofa.</em></p>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-back-product" onclick="goBack()">
+      <div class="bilingual">
+        <span class="vi">← Quay lại</span>
+        <span class="en">Back</span>
+      </div>
+    </button>
+    <a id="product-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-product-page">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <div class="bilingual">
+        <span class="vi">Trang SP</span>
+        <span class="en">Product page</span>
+      </div>
+    </a>
+    <a id="ar-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-start-ar">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+      <div class="bilingual">
+        <span class="vi">Bắt đầu AR</span>
+        <span class="en">Start AR</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script>
+  // ── Sản phẩm — thay ar_url bằng link rittai-service.com thật ──
+  const products = [
+    { id:"sofa-hana-3s",      name:"Sofa Hana",         sub:"3 chỗ · Vải cao cấp · 3 màu",   price:"12.990.000 ₫", img:"https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" },
+    { id:"sofa-nori-l",       name:"Sofa Nori L-Shape", sub:"Góc chữ L · Da tổng hợp",       price:"18.275.000 ₫", img:"https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" },
+    { id:"sofa-yuki-2s",      name:"Sofa Yuki",         sub:"2 chỗ · Nỉ mềm",                price:"8.490.000 ₫",  img:"https://images.unsplash.com/photo-1567538096621-38d2284b23ff?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" },
+    { id:"sofa-sora-1s",      name:"Sofa Sora Studio",  sub:"1 chỗ · Khung gỗ sồi",          price:"6.990.000 ₫",  img:"https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" },
+    { id:"sofa-kaze-recline", name:"Sofa Kaze Recline", sub:"3 chỗ · Ngả lưng điều chỉnh",  price:"15.840.000 ₫", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" },
+    { id:"sofa-tsuki-bed",    name:"Sofa Tsuki",        sub:"Sofa giường · Đa năng",         price:"16.500.000 ₫", img:"https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400&auto=format&fit=crop", ar_url:"https://rittai-service.com/THAY_LINK_THAT", product_url:"https://www.nitori-net.jp/THAY_LINK_SP" }
+  ];
+
+  // Render danh sách
+  const listEl = document.getElementById('list');
+  products.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="card-img"><img src="${p.img}" alt="${p.name}" loading="lazy"/></div>
+      <div class="card-body">
+        <div>
+          <div class="card-name">${p.name}</div>
+          <div class="card-sub">${p.sub}</div>
+        </div>
+        <div class="card-foot">
+          <span class="card-price">${p.price}</span>
+          <span class="tag-ar">AR</span>
+        </div>
+      </div>`;
+    div.addEventListener('click', () => openAR(p));
+    listEl.appendChild(div);
+  });
+
+  // Chuyển sang trang trung gian
+  function openAR(p) {
+    document.getElementById('ar-img').src  = p.img;
+    document.getElementById('ar-img').alt  = p.name;
+    document.getElementById('ar-name').textContent = p.name;
+    document.getElementById('ar-sub').textContent  = p.sub;
+    document.getElementById('ar-link').href = p.ar_url;
+    document.getElementById('product-link').href = p.product_url;
+
+    // GA4 tracking
+    trackAR(p.id, p.name);
+
+    document.getElementById('page-list').classList.remove('active');
+    document.getElementById('page-ar').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // Quay lại danh sách
+  function goBack() {
+    document.getElementById('page-ar').classList.remove('active');
+    document.getElementById('page-list').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>
