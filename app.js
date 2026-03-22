@@ -6,68 +6,47 @@ app.js — LOGIC CHÍNH
 */
 
 /* ════════════════════════════════════════════════════════════
-PHẦN 1 — ĐỌC VÀ PARSE FILE products.csv
+PHẦN 1 — ĐỌC DỮ LIỆU TỪ GOOGLE SHEETS
+Fetch CSV công khai từ Google Sheets — không cần upload file
 ════════════════════════════════════════════════════════════ */
 
 /*
-parseCSV(text)
-Chuyển nội dung file CSV thành mảng object JS.
+⚠️ THAY SHEET_CSV_URL bằng link publish của Google Sheet của bạn.
+Xem hướng dẫn trong README.md để lấy link này.
+*/
+var SHEET_CSV_URL = ‘THAY_LINK_GOOGLE_SHEET_CSV_VÀO_ĐÂY’;
 
-CSV có dạng:
-id,name,sub,…
-sofa-hana,Sofa Hana,…
-
-→ Trả về mảng rows:
-[{ id:“sofa-hana”, name:“Sofa Hana”, … }, …]
+/*
+parseCSV(text) — Chuyển chuỗi CSV thành mảng object
 */
 function parseCSV(text) {
-const lines = text.trim().split(’\n’);
+const lines = text.trim().split(’\n’).filter(l => l.trim());
 const headers = lines[0].split(’,’).map(h => h.trim());
 return lines.slice(1).map(line => {
-// Tách theo dấu phẩy, nhưng bỏ qua dấu phẩy trong dấu ngoặc kép
-const values = line.match(/(”.*?”|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g) || [];
+// Tách đúng kể cả khi có dấu phẩy trong dấu ngoặc kép
+const values = [];
+let cur = ‘’, inQuote = false;
+for (let i = 0; i < line.length; i++) {
+if (line[i] === ‘”’) { inQuote = !inQuote; }
+else if (line[i] === ‘,’ && !inQuote) { values.push(cur.trim()); cur = ‘’; }
+else { cur += line[i]; }
+}
+values.push(cur.trim());
 const obj = {};
-headers.forEach((h, i) => {
-obj[h] = (values[i] || ‘’).replace(/^”|”$/g, ‘’).trim();
-});
+headers.forEach((h, i) => { obj[h] = (values[i] || ‘’).replace(/^”|”$/g, ‘’).trim(); });
 return obj;
 });
 }
 
 /*
-groupByProduct(rows)
-Gom các hàng có cùng id thành 1 sản phẩm với mảng variants.
-
-Input (rows từ CSV):
-[
-{ id:“sofa-hana”, name:“Sofa Hana”, material:“Vải”, size:“2 chỗ”, color:“Be”, … },
-{ id:“sofa-hana”, name:“Sofa Hana”, material:“Vải”, size:“3 chỗ”, color:“Xám”, … },
-{ id:“sofa-nori”, name:“Sofa Nori”, … },
-]
-
-Output (PRODUCTS):
-[
-{
-id: “sofa-hana”, name: “Sofa Hana”, img: “…”,
-variants: [
-{ material:“Vải”, size:“2 chỗ”, color:“Be”, ar_url:”…”, … },
-{ material:“Vải”, size:“3 chỗ”, color:“Xám”, ar_url:”…”, … },
-]
-},
-{ id: “sofa-nori”, … }
-]
+groupByProduct(rows) — Gom các hàng cùng id thành 1 sản phẩm + variants[]
 */
 function groupByProduct(rows) {
 const map = {};
 rows.forEach(row => {
+if (!row.id) return; // Bỏ qua hàng trống
 if (!map[row.id]) {
-map[row.id] = {
-id:   row.id,
-name: row.name,
-sub:  row.sub,
-img:  row.img,
-variants: []
-};
+map[row.id] = { id: row.id, name: row.name, sub: row.sub, img: row.img, variants: [] };
 }
 map[row.id].variants.push({
 label:       `${row.material} / ${row.size} / ${row.color}`,
@@ -83,22 +62,22 @@ return Object.values(map);
 }
 
 /*
-loadProducts()
-Fetch file products.csv từ cùng thư mục, parse và khởi động app.
-Hiển thị loading khi đang tải, lỗi nếu không tìm thấy file.
+loadProducts() — Fetch CSV từ Google Sheets và khởi động app
 */
 async function loadProducts() {
-try {
 showLoading(true);
-const res = await fetch(‘products.csv’);
-if (!res.ok) throw new Error(`Không tìm thấy products.csv (${res.status})`);
-const text = await res.text();
-const rows = parseCSV(text);
+try {
+// Thêm timestamp để tránh cache cũ khi vừa sửa Sheet
+const url = SHEET_CSV_URL + ‘&t=’ + Date.now();
+const res  = await fetch(url);
+if (!res.ok) throw new Error(‘Không tải được dữ liệu từ Google Sheets (’ + res.status + ‘)’);
+const text     = await res.text();
+const rows     = parseCSV(text);
 const products = groupByProduct(rows);
+if (products.length === 0) throw new Error(‘Sheet không có dữ liệu sản phẩm nào’);
 showLoading(false);
 initApp(products);
 } catch (err) {
-showLoading(false);
 showError(err.message);
 }
 }
@@ -106,11 +85,11 @@ showError(err.message);
 function showLoading(show) {
 document.getElementById(‘loading’).style.display = show ? ‘flex’ : ‘none’;
 }
-
 function showError(msg) {
+showLoading(false);
 const el = document.getElementById(‘load-error’);
 el.style.display = ‘block’;
-el.textContent = ’⚠️ ’ + msg;
+el.textContent   = ’⚠️ ’ + msg;
 }
 
 /* ════════════════════════════════════════════════════════════
