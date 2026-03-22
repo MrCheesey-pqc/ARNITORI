@@ -6,15 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NITORI – Trải nghiệm AR</title>
 
-  <!-- CSS giao diện -->
-
-  <link rel="stylesheet" href="style.css"/>
-  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-
-  <!-- ══════════════════════════════════════════════════
-    GOOGLE ANALYTICS 4
-    ⚠️ Thay G-XXXXXXXXXX bằng Measurement ID thật của bạn
-  ══════════════════════════════════════════════════ -->
+  <!-- GA4: thay G-XXXXXXXXXX bằng Measurement ID thật -->
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 
@@ -22,15 +14,361 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX'); /* ⚠️ Thay ID ở đây */
+    gtag('config', 'G-XXXXXXXXXX');
   </script>
+
+  <style>
+/*
+  ════════════════════════════════════════════════════════════════
+  css/style.css — TOÀN BỘ GIAO DIỆN
+  ════════════════════════════════════════════════════════════════
+*/
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Biến màu Nitori Vietnam ── */
+:root {
+  --green:       #1a5c38;  /* Xanh lá đặc trưng Nitori */
+  --green-dark:  #134a2c;  /* Xanh đậm — khi nhấn nút */
+  --green-light: #eef5f1;  /* Xanh rất nhạt — nền hộp hướng dẫn */
+
+  --black:     #1a1a1a;
+  --gray-dark: #444;
+  --gray:      #767676;
+  --gray-line: #e0e0e0;
+  --bg:        #f5f5f5;
+  --white:     #ffffff;
+}
+
+/* ── Body ── */
+body {
+  background: var(--bg);
+  color: var(--black);
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   HEADER
+════════════════════════════════════════════════════════════ */
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-line);
+  position: sticky; top: 0; z-index: 50;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .65rem 1rem;
+  max-width: 600px; margin: 0 auto;
+}
+.logo-img  { height: 26px; display: block; }
+.logo-text {
+  font-size: 1.4rem; font-weight: 700;
+  letter-spacing: .04em; color: var(--black);
+  text-decoration: none; display: none;
+}
+.header-ar-tag {
+  display: flex; align-items: center; gap: .3rem;
+  background: var(--green); color: var(--white);
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: .28rem .65rem; border-radius: 2px;
+}
+.header-ar-tag svg { width: 11px; height: 11px; fill: #fff; }
+
+
+/* ════════════════════════════════════════════════════════════
+   BANNER
+════════════════════════════════════════════════════════════ */
+.banner {
+  background: var(--green);
+  padding: 1.4rem 1rem 1.2rem;
+  text-align: center;
+  max-width: 600px; margin: 0 auto;
+}
+.banner h1 {
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--white); margin-bottom: .3rem;
+  letter-spacing: -.01em;
+}
+.banner p {
+  font-size: .82rem; color: rgba(255,255,255,.85);
+  margin-bottom: 1rem; line-height: 1.55;
+}
+.steps-row {
+  display: flex; justify-content: center;
+  background: rgba(0,0,0,.15);
+  border-radius: 4px; overflow: hidden;
+}
+.step-item {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: .35rem;
+  padding: .55rem .4rem;
+  font-size: .72rem; color: var(--white); font-weight: 500;
+  border-right: 1px solid rgba(255,255,255,.15);
+}
+.step-item:last-child { border-right: none; }
+.step-num {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--white); color: var(--green);
+  font-size: .65rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+/* Đánh dấu bước hiện tại trong banner */
+.step-item.active { background: rgba(255,255,255,.15); }
+.step-item.active .step-num { background: var(--white); }
+
+
+/* ════════════════════════════════════════════════════════════
+   TRANG 1 — DANH SÁCH SẢN PHẨM
+════════════════════════════════════════════════════════════ */
+.section-label {
+  max-width: 600px; margin: 0 auto;
+  padding: .9rem 1rem .5rem;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gray);
+  border-bottom: 1px solid var(--gray-line);
+  background: var(--white);
+}
+.list {
+  max-width: 600px; margin: 0 auto;
+  background: var(--white);
+}
+.card {
+  display: flex; align-items: stretch;
+  border-bottom: 1px solid var(--gray-line);
+  cursor: pointer;
+  opacity: 0; transform: translateY(8px);
+  animation: up .4s ease forwards;
+  transition: background .15s;
+}
+.card:nth-child(1){animation-delay:.03s}
+.card:nth-child(2){animation-delay:.08s}
+.card:nth-child(3){animation-delay:.13s}
+.card:nth-child(4){animation-delay:.18s}
+.card:nth-child(5){animation-delay:.23s}
+.card:nth-child(6){animation-delay:.28s}
+.card:active { background: #fafafa; }
+
+.card-img {
+  width: 100px; flex-shrink: 0;
+  background: var(--bg); overflow: hidden;
+}
+.card-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .3s;
+}
+.card:hover .card-img img { transform: scale(1.05); }
+
+.card-body {
+  flex: 1; padding: .8rem .9rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.card-name { font-size: .92rem; font-weight: 700; color: var(--black); margin-bottom: .15rem; }
+.card-sub  { font-size: .75rem; color: var(--gray); margin-bottom: .5rem; }
+.card-bottom { display: flex; align-items: center; justify-content: space-between; }
+.card-variant-count { font-size: .72rem; color: var(--gray); }
+.card-ar-pill {
+  display: flex; align-items: center; gap: .25rem;
+  background: var(--green-light); color: var(--green);
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: .25rem .55rem; border-radius: 2px;
+  border: 1px solid rgba(26,92,56,.2);
+}
+.card-ar-pill svg { width: 10px; height: 10px; fill: var(--green); }
+.card-chevron { color: var(--gray-line); font-size: 1rem; margin-left: .5rem; }
+
+
+/* ════════════════════════════════════════════════════════════
+   TRANG 2 — CHỌN BIẾN THỂ (chất liệu / kích thước / màu)
+════════════════════════════════════════════════════════════ */
+.page-header {
+  max-width: 600px; margin: 0 auto;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-line);
+  padding: .7rem 1rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.back-btn {
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; gap: .3rem;
+  font-size: .8rem; color: var(--green); padding: 0;
+  font-family: inherit;
+}
+.back-btn svg { width: 14px; height: 14px; stroke: var(--green); fill: none; }
+.page-title { font-size: .85rem; font-weight: 700; color: var(--black); }
+
+.variant-body {
+  max-width: 600px; margin: 0 auto;
+  background: var(--white);
+}
+
+/* Ảnh sản phẩm lớn — thay đổi khi chọn biến thể */
+.variant-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--bg); overflow: hidden;
+}
+.variant-img img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: opacity .25s ease;
+}
+
+.variant-info { padding: 1rem; border-bottom: 1px solid var(--gray-line); }
+.variant-name { font-size: 1.05rem; font-weight: 700; margin-bottom: .15rem; }
+.variant-selected-label {
+  font-size: .78rem; color: var(--green); font-weight: 500;
+}
+
+/* Nhóm bộ lọc: Chất liệu / Kích thước / Màu */
+.filter-section {
+  padding: .9rem 1rem;
+  border-bottom: 1px solid var(--gray-line);
+}
+.filter-title {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gray); margin-bottom: .55rem;
+}
+.filter-options {
+  display: flex; flex-wrap: wrap; gap: .45rem;
+}
+.filter-btn {
+  padding: .4rem .85rem;
+  border: 1.5px solid var(--gray-line);
+  border-radius: 3px;
+  background: var(--white); color: var(--black);
+  font-size: .78rem; cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.filter-btn:hover   { border-color: var(--green); }
+/* Trạng thái đã chọn */
+.filter-btn.selected {
+  border-color: var(--green);
+  background: var(--green); color: var(--white);
+}
+/* Trạng thái không khả dụng (không có biến thể phù hợp) */
+.filter-btn.disabled {
+  opacity: .35; cursor: not-allowed;
+  border-color: var(--gray-line);
+}
+
+/* Thông báo biến thể đã chọn */
+.variant-summary {
+  padding: .7rem 1rem;
+  background: var(--green-light);
+  border-bottom: 1px solid var(--gray-line);
+  font-size: .78rem; color: var(--green);
+  display: flex; align-items: center; gap: .4rem;
+}
+.variant-summary svg { width: 13px; height: 13px; fill: var(--green); flex-shrink: 0; }
+
+
+/* ════════════════════════════════════════════════════════════
+   TRANG 3 — XEM AR
+════════════════════════════════════════════════════════════ */
+.ar-guide {
+  padding: .85rem 1rem;
+  background: var(--green-light);
+  border-left: 3px solid var(--green);
+}
+.ar-guide-title {
+  font-size: .72rem; font-weight: 700; color: var(--green);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: .45rem;
+}
+.ar-guide ol {
+  padding-left: 1.1rem;
+  font-size: .8rem; color: var(--gray-dark);
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.ar-guide-en {
+  margin-top: .5rem; font-size: .72rem; color: var(--gray);
+  font-style: italic;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   NÚT BẤM (dùng chung trang 2 và trang 3)
+════════════════════════════════════════════════════════════ */
+.btn-row {
+  display: flex; gap: .6rem; padding: 1rem;
+  background: var(--white);
+  border-top: 1px solid var(--gray-line);
+  position: sticky; bottom: 0; z-index: 10;
+}
+
+/* Nút phụ: viền xám */
+.btn-secondary {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: .35rem;
+  background: var(--white); color: var(--black);
+  font-size: .8rem; font-weight: 600;
+  padding: .75rem .6rem; border-radius: 3px;
+  border: 1.5px solid var(--gray-line);
+  text-decoration: none; cursor: pointer;
+  transition: border-color .2s;
+  font-family: inherit;
+}
+.btn-secondary:hover { border-color: var(--gray); }
+.btn-secondary svg { width: 13px; height: 13px; stroke: var(--black); fill: none; flex-shrink: 0; }
+
+/* Nút chính: nền xanh */
+.btn-primary {
+  flex: 1.6;
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+  background: var(--green); color: var(--white);
+  font-size: .82rem; font-weight: 700;
+  padding: .75rem .6rem; border-radius: 3px;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: background .2s, transform .1s;
+  font-family: inherit;
+}
+.btn-primary:hover   { background: var(--green-dark); }
+.btn-primary:active  { transform: scale(.97); background: var(--green-dark); }
+.btn-primary svg     { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
+/* Khi nút bị vô hiệu hóa (chưa chọn đủ) */
+.btn-primary.disabled {
+  background: var(--gray-line); color: var(--gray); cursor: not-allowed;
+}
+.btn-primary.disabled:hover { background: var(--gray-line); }
+
+/* Nhãn song ngữ trong nút */
+.bilingual { display: flex; flex-direction: column; line-height: 1.2; text-align: left; }
+.bilingual .vi { font-size: .8rem; }
+.bilingual .en { font-size: .65rem; opacity: .75; font-weight: 400; }
+
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════ */
+footer {
+  max-width: 600px; margin: 0 auto;
+  text-align: center; padding: 1.5rem 1rem 2rem;
+  font-size: .72rem; color: var(--gray);
+  border-top: 1px solid var(--gray-line);
+  background: var(--white);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   ANIMATION & RESPONSIVE
+════════════════════════════════════════════════════════════ */
+@keyframes up { to { opacity: 1; transform: translateY(0); } }
+
+@media (min-width: 480px) {
+  .card-img { width: 130px; }
+}
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 
 </head>
 <body>
-
-<!-- ════════════════════════════════════════════════════════
-  HEADER — Cố định trên cùng
-════════════════════════════════════════════════════════ -->
 
 <header>
   <div class="header-top">
@@ -38,7 +376,7 @@
       <img class="logo-img"
            src="https://www.nitori.com.vn/cdn/shop/files/Untitled-1_673x179.png?v=1721612006"
            alt="NITORI"
-           onerror="this.style.display='none'; document.querySelector('.logo-text').style.display='block'"/>
+           onerror="this.style.display='none';document.querySelector('.logo-text').style.display='block'"/>
       <span class="logo-text">NITORI</span>
     </a>
     <div class="header-ar-tag">
@@ -47,10 +385,6 @@
     </div>
   </div>
 </header>
-
-<!-- ════════════════════════════════════════════════════════
-  BANNER — Tiêu đề + chỉ báo 3 bước
-════════════════════════════════════════════════════════ -->
 
 <div class="banner">
   <h1>Thử sofa ngay tại nhà bạn</h1>
@@ -62,194 +396,384 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════
-  TRANG 1 — DANH SÁCH SẢN PHẨM
-  Hiện mặc định. Ẩn khi chuyển trang bằng JS.
-════════════════════════════════════════════════════════ -->
+<!-- TRANG 1: DANH SÁCH -->
 
 <div id="page-list">
-  <div class="section-label">
-    Sofa hỗ trợ AR · <span style="color:var(--green)">●</span> AR Ready
-  </div>
-
-  <!-- Các card sản phẩm được tạo bởi js/app.js sau khi đọc products.csv -->
-
-  <div id="loading" style="display:flex;justify-content:center;align-items:center;padding:3rem;gap:.6rem;color:var(--gray);font-size:.85rem;">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-    Đang tải sản phẩm...
-  </div>
-  <div id="load-error" style="display:none;padding:1.5rem;color:#c0392b;font-size:.85rem;background:#fff0f0;margin:1rem;border-radius:4px;"></div>
+  <div class="section-label">Sofa hỗ trợ AR · <span style="color:var(--green)">●</span> AR Ready</div>
   <div class="list" id="list"></div>
-
   <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
 </div>
 
-<!-- ════════════════════════════════════════════════════════
-  TRANG 2 — CHỌN BIẾN THỂ (chất liệu / kích thước / màu)
-  Ẩn mặc định (display:none). JS gọi showPage('page-variant') để hiện.
-════════════════════════════════════════════════════════ -->
+<!-- TRANG 2: CHỌN BIẾN THỂ -->
 
 <div id="page-variant" style="display:none">
-
-  <!-- Thanh trên: nút quay lại + tên sản phẩm -->
-
   <div class="page-header">
     <button class="back-btn" id="btn-back-to-list">
-      <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
+      <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Quay lại
     </button>
     <span style="color:var(--gray-line)">|</span>
     <span class="page-title" id="variant-page-title"></span>
   </div>
-
   <div class="variant-body">
-
-```
-<!-- Ảnh sản phẩm — thay đổi theo biến thể được chọn -->
-<div class="variant-img">
-  <img id="variant-img" src="" alt=""/>
-</div>
-
-<!-- Tên + nhãn biến thể đang chọn -->
-<div class="variant-info">
-  <div class="variant-name" id="variant-name"></div>
-  <div class="variant-selected-label" id="variant-selected-label"></div>
-</div>
-
-<!-- BỘ LỌC 1: Chất liệu -->
-<div class="filter-section">
-  <div class="filter-title">Chất liệu · Material</div>
-  <!-- Các nút được render bởi js/app.js → renderFilterGroup() -->
-  <div class="filter-options" id="filter-material"></div>
-</div>
-
-<!-- BỘ LỌC 2: Kích thước -->
-<div class="filter-section">
-  <div class="filter-title">Kích thước · Size</div>
-  <div class="filter-options" id="filter-size"></div>
-</div>
-
-<!-- BỘ LỌC 3: Màu sắc -->
-<div class="filter-section">
-  <div class="filter-title">Màu sắc · Color</div>
-  <div class="filter-options" id="filter-color"></div>
-</div>
-
-<!-- Nút hành động -->
-<div class="btn-row">
-  <!-- Nút quay lại trang 1 -->
-  <button class="btn-secondary" id="btn-back-to-list-2"
-          onclick="document.getElementById('btn-back-to-list').click()">
-    ← Quay lại
-  </button>
-
-  <!-- Nút tiếp theo → trang AR (disabled cho đến khi chọn đủ) -->
-  <button class="btn-primary disabled" id="btn-next-ar">
-    <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
-    <div class="bilingual">
-      <span class="vi">Tiếp theo → Xem AR</span>
-      <span class="en">Next → View AR</span>
+    <div class="variant-img"><img id="variant-img" src="" alt=""/></div>
+    <div class="variant-info">
+      <div class="variant-name" id="variant-name"></div>
+      <div class="variant-selected-label" id="variant-selected-label"></div>
     </div>
-  </button>
-</div>
-```
-
+    <div class="filter-section">
+      <div class="filter-title">Chất liệu · Material</div>
+      <div class="filter-options" id="filter-material"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Kích thước · Size</div>
+      <div class="filter-options" id="filter-size"></div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-title">Màu sắc · Color</div>
+      <div class="filter-options" id="filter-color"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="document.getElementById('btn-back-to-list').click()">← Quay lại</button>
+      <button class="btn-primary disabled" id="btn-next-ar">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+        <div class="bilingual"><span class="vi">Tiếp theo → Xem AR</span><span class="en">Next → View AR</span></div>
+      </button>
+    </div>
   </div>
   <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
 </div>
 
-<!-- ════════════════════════════════════════════════════════
-  TRANG 3 — XEM AR
-  Hiện sau khi đã chọn đủ biến thể và nhấn "Tiếp theo".
-════════════════════════════════════════════════════════ -->
+<!-- TRANG 3: XEM AR -->
 
 <div id="page-ar" style="display:none">
-
-  <!-- Thanh trên: quay về trang 2 -->
-
   <div class="page-header">
     <button class="back-btn" id="btn-back-to-variant">
-      <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
+      <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Quay lại
     </button>
     <span style="color:var(--gray-line)">|</span>
     <span class="page-title" id="ar-page-title"></span>
   </div>
-
   <div class="variant-body">
-
-```
-<!-- Ảnh biến thể đã chọn -->
-<div class="variant-img">
-  <img id="ar-img" src="" alt=""/>
-</div>
-
-<!-- Tên + biến thể đã chọn -->
-<div class="variant-info">
-  <div class="variant-name" id="ar-name"></div>
-  <div class="variant-selected-label" id="ar-sub" style="color:var(--gray)"></div>
-</div>
-
-<!-- Hướng dẫn xem AR -->
-<div class="ar-guide">
-  <div class="ar-guide-title">Hướng dẫn xem AR</div>
-  <ol>
-    <li>Nhấn nút <strong>"Bắt đầu AR"</strong> bên dưới</li>
-    <li>Hướng camera xuống sàn nhà</li>
-    <li>Chạm vào màn hình để đặt sofa</li>
-  </ol>
-  <div class="ar-guide-en">
-    Tap "Start AR" → Point camera at floor → Tap to place sofa
-  </div>
-</div>
-
-<!-- 2 nút: trang sản phẩm + bắt đầu AR -->
-<div class="btn-row">
-
-  <!-- Nút trang sản phẩm — href điền bởi JS -->
-  <a id="product-link" href="#" target="_blank" rel="noopener" class="btn-secondary">
-    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
-      <polyline points="15 3 21 3 21 9"/>
-      <line x1="10" y1="14" x2="21" y2="3"/>
-    </svg>
-    <div class="bilingual">
-      <span class="vi">Trang sản phẩm</span>
-      <span class="en">Product page</span>
+    <div class="variant-img"><img id="ar-img" src="" alt=""/></div>
+    <div class="variant-info">
+      <div class="variant-name" id="ar-name"></div>
+      <div class="variant-selected-label" id="ar-sub" style="color:var(--gray)"></div>
     </div>
-  </a>
-
-  <!-- Nút AR — href điền bởi JS -->
-  <a id="ar-link" href="#" target="_blank" rel="noopener" class="btn-primary">
-    <svg viewBox="0 0 24 24">
-      <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/>
-    </svg>
-    <div class="bilingual">
-      <span class="vi">Bắt đầu AR</span>
-      <span class="en">Start AR</span>
+    <div class="ar-guide">
+      <div class="ar-guide-title">Hướng dẫn xem AR</div>
+      <ol>
+        <li>Nhấn nút <strong>"Bắt đầu AR"</strong> bên dưới</li>
+        <li>Hướng camera xuống sàn nhà</li>
+        <li>Chạm vào màn hình để đặt sofa</li>
+      </ol>
+      <div class="ar-guide-en">Tap "Start AR" → Point camera at floor → Tap to place sofa</div>
     </div>
-  </a>
-
-</div>
-```
-
+    <div class="btn-row">
+      <a id="product-link" href="#" target="_blank" rel="noopener" class="btn-secondary">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <div class="bilingual"><span class="vi">Trang sản phẩm</span><span class="en">Product page</span></div>
+      </a>
+      <a id="ar-link" href="#" target="_blank" rel="noopener" class="btn-primary">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>
+        <div class="bilingual"><span class="vi">Bắt đầu AR</span><span class="en">Start AR</span></div>
+      </a>
+    </div>
   </div>
   <footer>© 2025 Nitori Vietnam · Hỗ trợ iOS &amp; Android</footer>
 </div>
 
-<!-- ════════════════════════════════════════════════════════
-  SCRIPT — Load theo thứ tự:
-  1. data/products.js  → khai báo mảng PRODUCTS
-  2. js/app.js         → dùng PRODUCTS để render và xử lý logic
-════════════════════════════════════════════════════════ -->
+<script>
+// ============================================================
+//  products.js — FILE DỮ LIỆU SẢN PHẨM
+//  Chỉ cần sửa file này khi thêm / bớt / đổi sản phẩm
+// ============================================================
+//
+//  CÁCH THÊM SẢN PHẨM MỚI:
+//  Copy 1 khối { ... } bên dưới, paste vào trước dấu ];
+//  rồi đổi thông tin.
+//
+//  CÁCH THÊM BIẾN THỂ (màu / size / chất liệu):
+//  Thêm 1 dòng vào phần "bienThe" của sản phẩm đó.
+//  Mỗi dòng là: ["Chất liệu", "Kích thước", "Màu", "Link AR", "Link SP", "URL ảnh"]
+//
+//  LƯU Ý:
+//  - Sau khi sửa xong, upload file này lên GitHub ghi đè file cũ
+//  - Không xóa dòng đầu "var PRODUCTS = [" và dòng cuối "];"
+// ============================================================
 
-<!-- app.js chứa cả dữ liệu lẫn logic -->
+var PRODUCTS = [
 
-<script src="app.js"></script>
+  // ── SẢN PHẨM 1 ──────────────────────────────────────────
+  {
+    ten:  "Sofa Hana",
+    moTa: "Sofa phòng khách",
+    anh:  "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600",
+
+    // Mỗi dòng: ["Chất liệu", "Kích thước", "Màu", "Link AR", "Link SP", "Ảnh biến thể"]
+    bienThe: [
+      ["Vải", "2 chỗ", "Be",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Vải", "3 chỗ", "Be",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Vải", "3 chỗ", "Xám", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600"],
+      ["Da",  "3 chỗ", "Nâu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+    ]
+  },
+
+  // ── SẢN PHẨM 2 ──────────────────────────────────────────
+  {
+    ten:  "Sofa Nori L-Shape",
+    moTa: "Sofa góc chữ L",
+    anh:  "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600",
+
+    bienThe: [
+      ["Da tổng hợp", "L-Shape", "Kem",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Da tổng hợp", "L-Shape", "Đen",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600"],
+    ]
+  },
+
+  // ── SẢN PHẨM 3 ──────────────────────────────────────────
+  {
+    ten:  "Sofa Yuki",
+    moTa: "Sofa nỉ mềm",
+    anh:  "https://images.unsplash.com/photo-1567538096621-38d2284b23ff?w=600",
+
+    bienThe: [
+      ["Nỉ", "2 chỗ", "Xanh rêu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Nỉ", "2 chỗ", "Hồng",     "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Nỉ", "3 chỗ", "Xanh rêu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+    ]
+  },
+
+  // ── SẢN PHẨM 4 ──────────────────────────────────────────
+  {
+    ten:  "Sofa Kaze Recline",
+    moTa: "Sofa ngả lưng điều chỉnh",
+    anh:  "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=600",
+
+    bienThe: [
+      ["Da tổng hợp", "3 chỗ", "Nâu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+      ["Da tổng hợp", "3 chỗ", "Đen", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+    ]
+  },
+
+]; // ← KHÔNG XÓA DÒNG NÀY
+// app.js — Logic chính. Không cần sửa file này.
+
+// ── GA4 Tracking ────────────────────────────────────────────
+function trackAR(ten, bienThe) {
+  if (typeof gtag === 'undefined') return;
+  gtag('event', 'ar_view_click', { event_label: ten + ' | ' + bienThe });
+}
+function trackChon(ten, loai, gia_tri) {
+  if (typeof gtag === 'undefined') return;
+  gtag('event', 'variant_select', { event_label: ten + ' | ' + loai + ': ' + gia_tri });
+}
+
+// ── Chuyển đổi dữ liệu từ products.js sang định dạng dùng được ──
+function chuanHoaSanPham(raw) {
+  return raw.map((sp, idx) => ({
+    id:       'sp-' + idx,
+    name:     sp.ten,
+    sub:      sp.moTa,
+    img:      sp.anh,
+    variants: sp.bienThe.map(bt => ({
+      material:    bt[0],
+      size:        bt[1],
+      color:       bt[2],
+      ar_url:      bt[3],
+      product_url: bt[4],
+      img:         bt[5] || sp.anh,
+      label:       bt[0] + ' / ' + bt[1] + ' / ' + bt[2]
+    }))
+  }));
+}
+
+// ── Trạng thái app ───────────────────────────────────────────
+var state = {
+  products:         [],
+  currentProduct:   null,
+  selectedMaterial: null,
+  selectedSize:     null,
+  selectedColor:    null,
+};
+
+function getMatchedVariant() {
+  if (!state.currentProduct) return null;
+  return state.currentProduct.variants.find(v =>
+    v.material === state.selectedMaterial &&
+    v.size     === state.selectedSize     &&
+    v.color    === state.selectedColor
+  ) || null;
+}
+
+// ── Điều hướng ───────────────────────────────────────────────
+function showPage(pageId) {
+  ['page-list', 'page-variant', 'page-ar'].forEach(function(id) {
+    document.getElementById(id).style.display = (id === pageId) ? 'block' : 'none';
+  });
+  window.scrollTo(0, 0);
+  // Cập nhật bước active
+  var map = { 'page-list': 0, 'page-variant': 1, 'page-ar': 2 };
+  document.querySelectorAll('.step-item').forEach(function(el, i) {
+    el.classList.toggle('active', i === map[pageId]);
+  });
+}
+
+// ── Trang 1: Danh sách ───────────────────────────────────────
+function renderDanhSach() {
+  var listEl = document.getElementById('list');
+  listEl.innerHTML = '';
+  var arIcon = '<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:var(--green)"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>';
+
+  state.products.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML =
+      '<div class="card-img">' +
+        '<img src="' + p.img + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/200x150?text=No+Image\'"/>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div>' +
+          '<div class="card-name">' + p.name + '</div>' +
+          '<div class="card-sub">' + p.sub + '</div>' +
+        '</div>' +
+        '<div class="card-bottom">' +
+          '<span class="card-variant-count">' + p.variants.length + ' lựa chọn</span>' +
+          '<div style="display:flex;align-items:center;gap:.3rem">' +
+            '<span class="card-ar-pill">' + arIcon + ' AR</span>' +
+            '<span class="card-chevron">›</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    div.addEventListener('click', function() { openVariantPage(p); });
+    listEl.appendChild(div);
+  });
+}
+
+// ── Trang 2: Chọn biến thể ───────────────────────────────────
+function openVariantPage(product) {
+  state.currentProduct   = product;
+  state.selectedMaterial = null;
+  state.selectedSize     = null;
+  state.selectedColor    = null;
+
+  document.getElementById('variant-page-title').textContent    = product.name;
+  document.getElementById('variant-img').src                   = product.img;
+  document.getElementById('variant-img').alt                   = product.name;
+  document.getElementById('variant-name').textContent          = product.name;
+  document.getElementById('variant-selected-label').textContent = 'Chọn chất liệu, kích thước và màu sắc';
+
+  renderFilters();
+  updateVariantButtons();
+  showPage('page-variant');
+}
+
+function getUniqueValues(field) {
+  var seen = {}, result = [];
+  state.currentProduct.variants.forEach(function(v) {
+    if (!seen[v[field]]) { seen[v[field]] = true; result.push(v[field]); }
+  });
+  return result;
+}
+
+function isAvailable(field, value) {
+  return state.currentProduct.variants.some(function(v) {
+    var okM = field === 'material' ? v.material === value : (!state.selectedMaterial || v.material === state.selectedMaterial);
+    var okS = field === 'size'     ? v.size     === value : (!state.selectedSize     || v.size     === state.selectedSize);
+    var okC = field === 'color'    ? v.color    === value : (!state.selectedColor    || v.color    === state.selectedColor);
+    return okM && okS && okC;
+  });
+}
+
+function renderFilters() {
+  renderFilterGroup('filter-material', 'material', getUniqueValues('material'), state.selectedMaterial);
+  renderFilterGroup('filter-size',     'size',     getUniqueValues('size'),     state.selectedSize);
+  renderFilterGroup('filter-color',    'color',    getUniqueValues('color'),    state.selectedColor);
+}
+
+function renderFilterGroup(containerId, field, values, selectedValue) {
+  var container = document.getElementById(containerId);
+  container.innerHTML = '';
+  values.forEach(function(val) {
+    var btn = document.createElement('button');
+    btn.className   = 'filter-btn';
+    btn.textContent = val;
+    if (val === selectedValue)    btn.classList.add('selected');
+    if (!isAvailable(field, val)) btn.classList.add('disabled');
+    btn.addEventListener('click', function() {
+      if (btn.classList.contains('disabled')) return;
+      onFilterSelect(field, val);
+    });
+    container.appendChild(btn);
+  });
+}
+
+function onFilterSelect(field, value) {
+  var keyMap = { material: 'selectedMaterial', size: 'selectedSize', color: 'selectedColor' };
+  var key = keyMap[field];
+  state[key] = (state[key] === value) ? null : value;
+  trackChon(state.currentProduct.name, field, value);
+  renderFilters();
+
+  var matched = getMatchedVariant();
+  var imgEl   = document.getElementById('variant-img');
+  if (matched) {
+    imgEl.style.opacity = '0';
+    setTimeout(function() { imgEl.src = matched.img; imgEl.style.opacity = '1'; }, 200);
+    document.getElementById('variant-selected-label').textContent = '✓ ' + matched.label;
+  } else {
+    var parts = [];
+    if (state.selectedMaterial) parts.push('Chất liệu: ' + state.selectedMaterial);
+    if (state.selectedSize)     parts.push('Kích thước: ' + state.selectedSize);
+    if (state.selectedColor)    parts.push('Màu: ' + state.selectedColor);
+    document.getElementById('variant-selected-label').textContent =
+      parts.length ? parts.join(' · ') : 'Chọn chất liệu, kích thước và màu sắc';
+  }
+  updateVariantButtons();
+}
+
+function updateVariantButtons() {
+  var btn     = document.getElementById('btn-next-ar');
+  var matched = getMatchedVariant();
+  if (matched) {
+    btn.classList.remove('disabled');
+    btn.onclick = function() { openARPage(matched); };
+  } else {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+  }
+}
+
+// ── Trang 3: Xem AR ─────────────────────────────────────────
+function openARPage(variant) {
+  trackAR(state.currentProduct.name, variant.label);
+  document.getElementById('ar-page-title').textContent = state.currentProduct.name;
+  document.getElementById('ar-img').src                = variant.img;
+  document.getElementById('ar-img').alt                = state.currentProduct.name;
+  document.getElementById('ar-name').textContent       = state.currentProduct.name;
+  document.getElementById('ar-sub').textContent        = variant.label;
+  document.getElementById('product-link').href         = variant.product_url;
+  document.getElementById('ar-link').href              = variant.ar_url;
+  showPage('page-ar');
+}
+
+// ── Khởi động ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof PRODUCTS === 'undefined' || PRODUCTS.length === 0) {
+    document.getElementById('list').innerHTML =
+      '<p style="padding:2rem;color:#c0392b;font-size:.85rem">⚠️ Không tìm thấy dữ liệu. Kiểm tra file products.js đã upload chưa.</p>';
+    return;
+  }
+  state.products = chuanHoaSanPham(PRODUCTS);
+  renderDanhSach();
+  showPage('page-list');
+
+  document.getElementById('btn-back-to-list').addEventListener('click',    function() { showPage('page-list'); });
+  document.getElementById('btn-back-to-variant').addEventListener('click', function() { showPage('page-variant'); });
+});
+
+</script>
 
 </body>
 </html>
