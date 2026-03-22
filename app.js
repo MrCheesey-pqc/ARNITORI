@@ -14,7 +14,7 @@ Fetch CSV công khai từ Google Sheets — không cần upload file
 ⚠️ THAY SHEET_CSV_URL bằng link publish của Google Sheet của bạn.
 Xem hướng dẫn trong README.md để lấy link này.
 */
-var SHEET_CSV_URL = ‘THAY_LINK_GOOGLE_SHEET_CSV_VÀO_ĐÂY’;
+var SHEET_CSV_URL = ‘https://docs.google.com/spreadsheets/d/e/2PACX-1vSK8h39O-7GhNJCsJ24ndjy474DW0EOHRTIZfpjUj1QzF26enkVNFpVWNHObcGgKDj1SuYiu9x75QYX/pub?output=csv’;
 
 /*
 parseCSV(text) — Chuyển chuỗi CSV thành mảng object
