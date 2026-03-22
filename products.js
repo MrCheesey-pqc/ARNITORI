@@ -29,7 +29,7 @@ product_url → link trang sản phẩm trên nitori.com.vn cho biến thể nà
   ════════════════════════════════════════════════════════════════
   */
 
-const PRODUCTS = [
+var PRODUCTS = [
 
 // ── SẢN PHẨM 1 ──────────────────────────────────────────────
 {
