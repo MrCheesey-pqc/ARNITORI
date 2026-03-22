@@ -1,121 +1,121 @@
-/*
-════════════════════════════════════════════════════════════════
-app.js — LOGIC CHÍNH
-Đọc dữ liệu từ products.csv → render 3 trang
-════════════════════════════════════════════════════════════════
-*/
+// ============================================================
+//  products.js — FILE DỮ LIỆU SẢN PHẨM
+//  Chỉ cần sửa file này khi thêm / bớt / đổi sản phẩm
+// ============================================================
+//
+//  CÁCH THÊM SẢN PHẨM MỚI:
+//  Copy 1 khối { … } bên dưới, paste vào trước dấu ];
+//  rồi đổi thông tin.
+//
+//  CÁCH THÊM BIẾN THỂ (màu / size / chất liệu):
+//  Thêm 1 dòng vào phần “bienThe” của sản phẩm đó.
+//  Mỗi dòng là: [“Chất liệu”, “Kích thước”, “Màu”, “Link AR”, “Link SP”, “URL ảnh”]
+//
+//  LƯU Ý:
+//  - Sau khi sửa xong, upload file này lên GitHub ghi đè file cũ
+//  - Không xóa dòng đầu “var PRODUCTS = [” và dòng cuối “];”
+// ============================================================
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 1 — ĐỌC DỮ LIỆU TỪ GOOGLE SHEETS
-Fetch CSV công khai từ Google Sheets — không cần upload file
-════════════════════════════════════════════════════════════ */
+var PRODUCTS = [
 
-/*
-⚠️ THAY SHEET_CSV_URL bằng link publish của Google Sheet của bạn.
-Xem hướng dẫn trong README.md để lấy link này.
-*/
-var SHEET_CSV_URL = https://docs.google.com/spreadsheets/d/e/2PACX-1vSK8h39O-7GhNJCsJ24ndjy474DW0EOHRTIZfpjUj1QzF26enkVNFpVWNHObcGgKDj1SuYiu9x75QYX/pub?output=csv;
+// ── SẢN PHẨM 1 ──────────────────────────────────────────
+{
+ten:  “Sofa Hana”,
+moTa: “Sofa phòng khách”,
+anh:  “https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600”,
 
-/*
-parseCSV(text) — Chuyển chuỗi CSV thành mảng object
-*/
-function parseCSV(text) {
-const lines = text.trim().split(’\n’).filter(l => l.trim());
-const headers = lines[0].split(’,’).map(h => h.trim());
-return lines.slice(1).map(line => {
-// Tách đúng kể cả khi có dấu phẩy trong dấu ngoặc kép
-const values = [];
-let cur = ‘’, inQuote = false;
-for (let i = 0; i < line.length; i++) {
-if (line[i] === ‘”’) { inQuote = !inQuote; }
-else if (line[i] === ‘,’ && !inQuote) { values.push(cur.trim()); cur = ‘’; }
-else { cur += line[i]; }
-}
-values.push(cur.trim());
-const obj = {};
-headers.forEach((h, i) => { obj[h] = (values[i] || ‘’).replace(/^”|”$/g, ‘’).trim(); });
-return obj;
-});
-}
+```
+// Mỗi dòng: ["Chất liệu", "Kích thước", "Màu", "Link AR", "Link SP", "Ảnh biến thể"]
+bienThe: [
+  ["Vải", "2 chỗ", "Be",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Vải", "3 chỗ", "Be",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Vải", "3 chỗ", "Xám", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600"],
+  ["Da",  "3 chỗ", "Nâu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+]
+```
 
-/*
-groupByProduct(rows) — Gom các hàng cùng id thành 1 sản phẩm + variants[]
-*/
-function groupByProduct(rows) {
-const map = {};
-rows.forEach(row => {
-if (!row.id) return; // Bỏ qua hàng trống
-if (!map[row.id]) {
-map[row.id] = { id: row.id, name: row.name, sub: row.sub, img: row.img, variants: [] };
-}
-map[row.id].variants.push({
-label:       `${row.material} / ${row.size} / ${row.color}`,
-material:    row.material,
-size:        row.size,
-color:       row.color,
-img:         row.variant_img || row.img,
-ar_url:      row.ar_url,
-product_url: row.product_url
-});
-});
-return Object.values(map);
-}
+},
 
-/*
-loadProducts() — Fetch CSV từ Google Sheets và khởi động app
-*/
-async function loadProducts() {
-showLoading(true);
-try {
-// Thêm timestamp để tránh cache cũ khi vừa sửa Sheet
-const url = SHEET_CSV_URL + ‘&t=’ + Date.now();
-const res  = await fetch(url);
-if (!res.ok) throw new Error(‘Không tải được dữ liệu từ Google Sheets (’ + res.status + ‘)’);
-const text     = await res.text();
-const rows     = parseCSV(text);
-const products = groupByProduct(rows);
-if (products.length === 0) throw new Error(‘Sheet không có dữ liệu sản phẩm nào’);
-showLoading(false);
-initApp(products);
-} catch (err) {
-showError(err.message);
-}
-}
+// ── SẢN PHẨM 2 ──────────────────────────────────────────
+{
+ten:  “Sofa Nori L-Shape”,
+moTa: “Sofa góc chữ L”,
+anh:  “https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600”,
 
-function showLoading(show) {
-document.getElementById(‘loading’).style.display = show ? ‘flex’ : ‘none’;
-}
-function showError(msg) {
-showLoading(false);
-const el = document.getElementById(‘load-error’);
-el.style.display = ‘block’;
-el.textContent   = ’⚠️ ’ + msg;
-}
+```
+bienThe: [
+  ["Da tổng hợp", "L-Shape", "Kem",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Da tổng hợp", "L-Shape", "Đen",  "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600"],
+]
+```
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 2 — GOOGLE ANALYTICS 4
-════════════════════════════════════════════════════════════ */
-function trackAR(productId, variantLabel) {
+},
+
+// ── SẢN PHẨM 3 ──────────────────────────────────────────
+{
+ten:  “Sofa Yuki”,
+moTa: “Sofa nỉ mềm”,
+anh:  “https://images.unsplash.com/photo-1567538096621-38d2284b23ff?w=600”,
+
+```
+bienThe: [
+  ["Nỉ", "2 chỗ", "Xanh rêu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Nỉ", "2 chỗ", "Hồng",     "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Nỉ", "3 chỗ", "Xanh rêu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+]
+```
+
+},
+
+// ── SẢN PHẨM 4 ──────────────────────────────────────────
+{
+ten:  “Sofa Kaze Recline”,
+moTa: “Sofa ngả lưng điều chỉnh”,
+anh:  “https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=600”,
+
+```
+bienThe: [
+  ["Da tổng hợp", "3 chỗ", "Nâu", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+  ["Da tổng hợp", "3 chỗ", "Đen", "https://rittai-service.com/LINK_AR", "https://www.nitori.com.vn/LINK_SP", ""],
+]
+```
+
+},
+
+]; // ← KHÔNG XÓA DÒNG NÀY
+// app.js — Logic chính. Không cần sửa file này.
+
+// ── GA4 Tracking ────────────────────────────────────────────
+function trackAR(ten, bienThe) {
 if (typeof gtag === ‘undefined’) return;
-gtag(‘event’, ‘ar_view_click’, {
-event_category: ‘AR’,
-event_label:    variantLabel,
-product_id:     productId
-});
+gtag(‘event’, ‘ar_view_click’, { event_label: ten + ’ | ’ + bienThe });
 }
-function trackVariantSelect(productId, filterType, value) {
+function trackChon(ten, loai, gia_tri) {
 if (typeof gtag === ‘undefined’) return;
-gtag(‘event’, ‘variant_select’, {
-event_category: ‘Variant’,
-event_label:    `${productId} | ${filterType}: ${value}`,
-product_id:     productId
-});
+gtag(‘event’, ‘variant_select’, { event_label: ten + ’ | ’ + loai + ’: ’ + gia_tri });
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 3 — TRẠNG THÁI ỨNG DỤNG
-════════════════════════════════════════════════════════════ */
-const state = {
+// ── Chuyển đổi dữ liệu từ products.js sang định dạng dùng được ──
+function chuanHoaSanPham(raw) {
+return raw.map((sp, idx) => ({
+id:       ‘sp-’ + idx,
+name:     sp.ten,
+sub:      sp.moTa,
+img:      sp.anh,
+variants: sp.bienThe.map(bt => ({
+material:    bt[0],
+size:        bt[1],
+color:       bt[2],
+ar_url:      bt[3],
+product_url: bt[4],
+img:         bt[5] || sp.anh,
+label:       bt[0] + ’ / ’ + bt[1] + ’ / ’ + bt[2]
+}))
+}));
+}
+
+// ── Trạng thái app ───────────────────────────────────────────
+var state = {
 products:         [],
 currentProduct:   null,
 selectedMaterial: null,
@@ -132,54 +132,61 @@ v.color    === state.selectedColor
 ) || null;
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 4 — ĐIỀU HƯỚNG
-════════════════════════════════════════════════════════════ */
+// ── Điều hướng ───────────────────────────────────────────────
 function showPage(pageId) {
-[‘page-list’, ‘page-variant’, ‘page-ar’].forEach(id => {
+[‘page-list’, ‘page-variant’, ‘page-ar’].forEach(function(id) {
 document.getElementById(id).style.display = (id === pageId) ? ‘block’ : ‘none’;
 });
 window.scrollTo(0, 0);
-updateStepIndicator(pageId);
-}
-
-function updateStepIndicator(pageId) {
-const map = { ‘page-list’: 0, ‘page-variant’: 1, ‘page-ar’: 2 };
-document.querySelectorAll(’.step-item’).forEach((el, i) => {
+// Cập nhật bước active
+var map = { ‘page-list’: 0, ‘page-variant’: 1, ‘page-ar’: 2 };
+document.querySelectorAll(’.step-item’).forEach(function(el, i) {
 el.classList.toggle(‘active’, i === map[pageId]);
 });
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 5 — TRANG 1: DANH SÁCH
-════════════════════════════════════════════════════════════ */
-function renderProductList() {
-const listEl = document.getElementById(‘list’);
+// ── Trang 1: Danh sách ───────────────────────────────────────
+function renderDanhSach() {
+var listEl = document.getElementById(‘list’);
 listEl.innerHTML = ‘’;
-const arIcon = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:var(--green)"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>`;
+var arIcon = ‘<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:var(--green)"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5l-8 4-8-4 8-3.82zM4 10.18l7 3.5V19.5l-7-3.5v-5.82zm9 9.32v-5.82l7-3.5v5.82l-7 3.5z"/></svg>’;
 
-state.products.forEach(p => {
-const div = document.createElement(‘div’);
+state.products.forEach(function(p) {
+var div = document.createElement(‘div’);
 div.className = ‘card’;
-div.innerHTML = ` <div class="card-img"> <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/200x150?text=No+Image'"/> </div> <div class="card-body"> <div> <div class="card-name">${p.name}</div> <div class="card-sub">${p.sub}</div> </div> <div class="card-bottom"> <span class="card-variant-count">${p.variants.length} lựa chọn</span> <div style="display:flex;align-items:center;gap:.3rem"> <span class="card-ar-pill">${arIcon} AR</span> <span class="card-chevron">›</span> </div> </div> </div>`;
-div.addEventListener(‘click’, () => openVariantPage(p));
+div.innerHTML =
+‘<div class="card-img">’ +
+‘<img src="' + p.img + '" alt="' + p.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/200x150?text=No+Image\'"/>’ +
+‘</div>’ +
+‘<div class="card-body">’ +
+‘<div>’ +
+‘<div class="card-name">’ + p.name + ‘</div>’ +
+‘<div class="card-sub">’ + p.sub + ‘</div>’ +
+‘</div>’ +
+‘<div class="card-bottom">’ +
+‘<span class="card-variant-count">’ + p.variants.length + ’ lựa chọn</span>’ +
+‘<div style="display:flex;align-items:center;gap:.3rem">’ +
+‘<span class="card-ar-pill">’ + arIcon + ’ AR</span>’ +
+‘<span class="card-chevron">›</span>’ +
+‘</div>’ +
+‘</div>’ +
+‘</div>’;
+div.addEventListener(‘click’, function() { openVariantPage(p); });
 listEl.appendChild(div);
 });
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 6 — TRANG 2: CHỌN BIẾN THỂ
-════════════════════════════════════════════════════════════ */
+// ── Trang 2: Chọn biến thể ───────────────────────────────────
 function openVariantPage(product) {
 state.currentProduct   = product;
 state.selectedMaterial = null;
 state.selectedSize     = null;
 state.selectedColor    = null;
 
-document.getElementById(‘variant-page-title’).textContent = product.name;
-document.getElementById(‘variant-img’).src                = product.img;
-document.getElementById(‘variant-img’).alt                = product.name;
-document.getElementById(‘variant-name’).textContent       = product.name;
+document.getElementById(‘variant-page-title’).textContent    = product.name;
+document.getElementById(‘variant-img’).src                   = product.img;
+document.getElementById(‘variant-img’).alt                   = product.name;
+document.getElementById(‘variant-name’).textContent          = product.name;
 document.getElementById(‘variant-selected-label’).textContent = ‘Chọn chất liệu, kích thước và màu sắc’;
 
 renderFilters();
@@ -188,15 +195,19 @@ showPage(‘page-variant’);
 }
 
 function getUniqueValues(field) {
-return […new Set(state.currentProduct.variants.map(v => v[field]))];
+var seen = {}, result = [];
+state.currentProduct.variants.forEach(function(v) {
+if (!seen[v[field]]) { seen[v[field]] = true; result.push(v[field]); }
+});
+return result;
 }
 
 function isAvailable(field, value) {
-return state.currentProduct.variants.some(v => {
-const okMaterial = field === ‘material’ ? v.material === value : (!state.selectedMaterial || v.material === state.selectedMaterial);
-const okSize     = field === ‘size’     ? v.size     === value : (!state.selectedSize     || v.size     === state.selectedSize);
-const okColor    = field === ‘color’    ? v.color    === value : (!state.selectedColor    || v.color    === state.selectedColor);
-return okMaterial && okSize && okColor;
+return state.currentProduct.variants.some(function(v) {
+var okM = field === ‘material’ ? v.material === value : (!state.selectedMaterial || v.material === state.selectedMaterial);
+var okS = field === ‘size’     ? v.size     === value : (!state.selectedSize     || v.size     === state.selectedSize);
+var okC = field === ‘color’    ? v.color    === value : (!state.selectedColor    || v.color    === state.selectedColor);
+return okM && okS && okC;
 });
 }
 
@@ -207,15 +218,15 @@ renderFilterGroup(‘filter-color’,    ‘color’,    getUniqueValues(‘colo
 }
 
 function renderFilterGroup(containerId, field, values, selectedValue) {
-const container = document.getElementById(containerId);
+var container = document.getElementById(containerId);
 container.innerHTML = ‘’;
-values.forEach(val => {
-const btn = document.createElement(‘button’);
+values.forEach(function(val) {
+var btn = document.createElement(‘button’);
 btn.className   = ‘filter-btn’;
 btn.textContent = val;
-if (val === selectedValue)        btn.classList.add(‘selected’);
-if (!isAvailable(field, val))     btn.classList.add(‘disabled’);
-btn.addEventListener(‘click’, () => {
+if (val === selectedValue)    btn.classList.add(‘selected’);
+if (!isAvailable(field, val)) btn.classList.add(‘disabled’);
+btn.addEventListener(‘click’, function() {
 if (btn.classList.contains(‘disabled’)) return;
 onFilterSelect(field, val);
 });
@@ -224,23 +235,23 @@ container.appendChild(btn);
 }
 
 function onFilterSelect(field, value) {
-const key = `selected${field.charAt(0).toUpperCase() + field.slice(1)}`;
+var keyMap = { material: ‘selectedMaterial’, size: ‘selectedSize’, color: ‘selectedColor’ };
+var key = keyMap[field];
 state[key] = (state[key] === value) ? null : value;
-trackVariantSelect(state.currentProduct.id, field, value);
+trackChon(state.currentProduct.name, field, value);
 renderFilters();
 
-const matched = getMatchedVariant();
-const imgEl   = document.getElementById(‘variant-img’);
+var matched = getMatchedVariant();
+var imgEl   = document.getElementById(‘variant-img’);
 if (matched) {
 imgEl.style.opacity = ‘0’;
-setTimeout(() => { imgEl.src = matched.img; imgEl.style.opacity = ‘1’; }, 200);
-document.getElementById(‘variant-selected-label’).textContent = `✓ ${matched.label}`;
+setTimeout(function() { imgEl.src = matched.img; imgEl.style.opacity = ‘1’; }, 200);
+document.getElementById(‘variant-selected-label’).textContent = ’✓ ’ + matched.label;
 } else {
-const parts = [
-state.selectedMaterial && `Chất liệu: ${state.selectedMaterial}`,
-state.selectedSize     && `Kích thước: ${state.selectedSize}`,
-state.selectedColor    && `Màu: ${state.selectedColor}`
-].filter(Boolean);
+var parts = [];
+if (state.selectedMaterial) parts.push(’Chất liệu: ’ + state.selectedMaterial);
+if (state.selectedSize)     parts.push(’Kích thước: ’ + state.selectedSize);
+if (state.selectedColor)    parts.push(‘Màu: ’ + state.selectedColor);
 document.getElementById(‘variant-selected-label’).textContent =
 parts.length ? parts.join(’ · ’) : ‘Chọn chất liệu, kích thước và màu sắc’;
 }
@@ -248,22 +259,20 @@ updateVariantButtons();
 }
 
 function updateVariantButtons() {
-const btn     = document.getElementById(‘btn-next-ar’);
-const matched = getMatchedVariant();
+var btn     = document.getElementById(‘btn-next-ar’);
+var matched = getMatchedVariant();
 if (matched) {
 btn.classList.remove(‘disabled’);
-btn.onclick = () => openARPage(matched);
+btn.onclick = function() { openARPage(matched); };
 } else {
 btn.classList.add(‘disabled’);
 btn.onclick = null;
 }
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 7 — TRANG 3: XEM AR
-════════════════════════════════════════════════════════════ */
+// ── Trang 3: Xem AR ─────────────────────────────────────────
 function openARPage(variant) {
-trackAR(state.currentProduct.id, variant.label);
+trackAR(state.currentProduct.name, variant.label);
 document.getElementById(‘ar-page-title’).textContent = state.currentProduct.name;
 document.getElementById(‘ar-img’).src                = variant.img;
 document.getElementById(‘ar-img’).alt                = state.currentProduct.name;
@@ -274,16 +283,17 @@ document.getElementById(‘ar-link’).href              = variant.ar_url;
 showPage(‘page-ar’);
 }
 
-/* ════════════════════════════════════════════════════════════
-PHẦN 8 — KHỞI ĐỘNG
-════════════════════════════════════════════════════════════ */
-function initApp(products) {
-state.products = products;
-renderProductList();
+// ── Khởi động ────────────────────────────────────────────────
+document.addEventListener(‘DOMContentLoaded’, function() {
+if (typeof PRODUCTS === ‘undefined’ || PRODUCTS.length === 0) {
+document.getElementById(‘list’).innerHTML =
+‘<p style="padding:2rem;color:#c0392b;font-size:.85rem">⚠️ Không tìm thấy dữ liệu. Kiểm tra file products.js đã upload chưa.</p>’;
+return;
+}
+state.products = chuanHoaSanPham(PRODUCTS);
+renderDanhSach();
 showPage(‘page-list’);
 
-document.getElementById(‘btn-back-to-list’).addEventListener(‘click’,    () => showPage(‘page-list’));
-document.getElementById(‘btn-back-to-variant’).addEventListener(‘click’, () => showPage(‘page-variant’));
-}
-
-document.addEventListener(‘DOMContentLoaded’, loadProducts);
+document.getElementById(‘btn-back-to-list’).addEventListener(‘click’,    function() { showPage(‘page-list’); });
+document.getElementById(‘btn-back-to-variant’).addEventListener(‘click’, function() { showPage(‘page-variant’); });
+});
