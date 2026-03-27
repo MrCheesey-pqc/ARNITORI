@@ -40,7 +40,7 @@ ten:  "Sofa N Believa 3",
 moTa: "Sofa điện 3 chỗ",
 anh:  "https://www.nitori.com.vn/cdn/shop/files/imgi_229_219030002979001_1200x1200.jpg?v=1753154102",
 
-```
+
 bienThe: [
   ["Da",         "3 chỗ", "Mocha", "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/3p-electric-sofa-n-believa-3-leather-mo",  "https://www.nitori.com.vn/cdn/shop/files/imgi_221_219030002924001_695x695.jpg?v=1753154073"],
   ["Da",         "3 chỗ", "Đen",   "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/3-electric-3p-sofa-n-believa-3-leather-bk", "https://www.nitori.com.vn/cdn/shop/files/imgi_220_219030002952312_289x289.jpg?v=1753154885"],
@@ -51,7 +51,7 @@ bienThe: [
   ["Vải",        "3 chỗ", "Nâu",   "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/3-electric-3p-sofa-n-believa-3-microfiber-br","https://www.nitori.com.vn/cdn/shop/files/imgi_228_219030003023915_695x695.jpg?v=1753154079"],
   ["Vải",        "3 chỗ", "Xám",   "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/3-electric-3p-sofa-n-believa-3-microfiber-gy","https://www.nitori.com.vn/cdn/shop/files/imgi_229_219030003012315_ac615c3c-ef53-4850-9a68-200ee4a89f13_695x695.jpg?v=1753154078"],
 ]
-```
+
 
 },
 
@@ -61,12 +61,12 @@ ten:  "Graze",
 moTa: "Sofa da thật",
 anh:  "https://www.nitori.com.vn/cdn/shop/files/114642001_570x570.jpg?v=1708076044",
 
-```
+
 bienThe: [
   ["Da thật", "2 chỗ", "Đen", "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/2p-electric-sofa-graze-bk",              "https://www.nitori.com.vn/cdn/shop/files/114566002_289x289.jpg?v=1708075874"],
   ["Da thật", "3 chỗ", "Đen", "https://rittai-service.com/index.html?item=item_dZA_nfvvxSy22IHoAwVmq&cp=cp_qvXK-38WCxPr_blank", "https://www.nitori.com.vn/products/3p-electric-sofa-with-table-graze2-bk",   "https://www.nitori.com.vn/cdn/shop/files/114642001_570x570.jpg?v=1708076044"],
 ]
-```
+
 
 },
 
@@ -109,7 +109,7 @@ ten:    "Phòng khách Bắc Âu",
 anh:    "https://www.nitori-net.jp/ecstatic/include/feature/img25/favorite-style/warm_sub01.jpg",
 sofaId: "sofa-n-believa-3",
 
-```
+
 sanPham: [
   {
     ten:        "N Believa 3",
@@ -126,7 +126,7 @@ sanPham: [
     product_url:"https://www.nitori.com.vn/products/center-table-ph02-100lbr"
   },
 ]
-```
+
 
 },
 
