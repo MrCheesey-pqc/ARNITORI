@@ -22,7 +22,7 @@
 //    [2] Màu
 //    [3] Link AR  (rittai-service.com)
 //    [4] Link SP  (nitori.com.vn)
-//    [5] Ảnh riêng (để “” nếu dùng chung ảnh đại diện)
+//    [5] Ảnh riêng (để "" nếu dùng chung ảnh đại diện)
 //
 //  CÁCH THÊM SẢN PHẨM MỚI:
 //    Copy 1 khối { ten, moTa, anh, bienThe:[…] }
@@ -36,9 +36,9 @@ var PRODUCTS = [
 
 // ── SẢN PHẨM 1 ──────────────────────────────────────────
 {
-ten:  “Sofa N Believa 3”,
-moTa: “Sofa điện 3 chỗ”,
-anh:  “https://www.nitori.com.vn/cdn/shop/files/imgi_229_219030002979001_1200x1200.jpg?v=1753154102”,
+ten:  "Sofa N Believa 3",
+moTa: "Sofa điện 3 chỗ",
+anh:  "https://www.nitori.com.vn/cdn/shop/files/imgi_229_219030002979001_1200x1200.jpg?v=1753154102",
 
 ```
 bienThe: [
@@ -57,9 +57,9 @@ bienThe: [
 
 // ── SẢN PHẨM 2 ──────────────────────────────────────────
 {
-ten:  “Graze”,
-moTa: “Sofa da thật”,
-anh:  “https://www.nitori.com.vn/cdn/shop/files/114642001_570x570.jpg?v=1708076044”,
+ten:  "Graze",
+moTa: "Sofa da thật",
+anh:  "https://www.nitori.com.vn/cdn/shop/files/114642001_570x570.jpg?v=1708076044",
 
 ```
 bienThe: [
@@ -81,18 +81,18 @@ bienThe: [
 //    id      → mã định danh (không dấu, không khoảng trắng)
 //    ten     → tên hiển thị
 //    anh     → URL ảnh phòng
-//    sofaId  → id sofa trong PRODUCTS để nút “Xem phối hợp” hoạt động
+//    sofaId  → id sofa trong PRODUCTS để nút "Xem phối hợp" hoạt động
 //              Cách tính sofaId từ tên sofa:
-//              “Sofa N Believa 3” → “sofa-n-believa-3”
-//              “Graze”            → “graze”
+//              "Sofa N Believa 3" → "sofa-n-believa-3"
+//              "Graze"            → "graze"
 //              (viết thường, thay khoảng trắng bằng dấu -)
 //
 //  sanPham: danh sách SP có trong ảnh, mỗi SP gồm:
 //    ten         → tên SP
 //    anh         → URL ảnh SP nhỏ
-//    loai        → “sofa”   = hiện popup chọn AR/Xem SP
-//                  “thuong” = mở trang nitori.com.vn luôn
-//    sofaId      → nếu loai=“sofa”, điền id sofa tương ứng
+//    loai        → "sofa"   = hiện popup chọn AR/Xem SP
+//                  "thuong" = mở trang nitori.com.vn luôn
+//    sofaId      → nếu loai="sofa", điền id sofa tương ứng
 //    product_url → link trang SP trên nitori.com.vn
 //
 //  CÁCH THÊM LOOK MỚI:
@@ -104,10 +104,10 @@ var LOOKS = [
 
 // ── PHÒNG MẪU 1 ──────────────────────────────────────────
 {
-id:     “look-1”,
-ten:    “Phòng khách Bắc Âu”,
-anh:    “https://www.nitori-net.jp/ecstatic/include/feature/img25/favorite-style/warm_sub01.jpg”,
-sofaId: “sofa-n-believa-3”,
+id:     "look-1",
+ten:    "Phòng khách Bắc Âu",
+anh:    "https://www.nitori-net.jp/ecstatic/include/feature/img25/favorite-style/warm_sub01.jpg",
+sofaId: "sofa-n-believa-3",
 
 ```
 sanPham: [
