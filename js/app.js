@@ -5,7 +5,7 @@
 
 // ── GA4 Tracking ────────────────────────────────────────────
 function trackAR(ten, bienThe) {
-if (typeof gtag === ‘undefined’) return;
+if (typeof gtag === 'undefined') return;
 gtag(‘event’, ‘ar_view_click’, { event_label: ten + ’ | ’ + bienThe });
 }
 function trackChon(ten, loai, giaTri) {
